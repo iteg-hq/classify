@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="9b586901-597f-47c9-b67b-b5e941b6f324" ChangeDateTime="07/03/2019 09:20:29">
+    <Property Name="ElementName" Value="[internal].[ClassifierType].[RowVersion]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[internal].[ClassifierType]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="rv" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="984fb2f3-99e9-4da0-9e1a-5f70ba2199b4" ChangeDateTime="07/09/2019 11:07:08">
+    <Property Name="ElementName" Value="[internal].[ClassifierRelationship].[ClassifierRelationshipTypeID]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[internal].[ClassifierRelationship]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ClassifierRelationshipTypeCodeID" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="3fd040ac-036d-4cc0-89fd-cbeb3d7a81f2" ChangeDateTime="07/09/2019 11:07:36">
+    <Property Name="ElementName" Value="[internal].[ClassifierRelationship].[ClassifierRelationshipTypeCodeID]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[internal].[ClassifierRelationship]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="RelationshipTypeCodeID" />
+  </Operation>
+</Operations>

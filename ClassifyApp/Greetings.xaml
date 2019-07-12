@@ -1,0 +1,15 @@
+﻿<Window x:Class="ClassifierApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:c="clr-namespace:ClassifierApp"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+  <DockPanel>
+    <ListBox Name="lbClassifierTypes" DockPanel.Dock="Left" Width="200" SelectionChanged="LbClassifierTypes_SelectionChanged"/>
+    <ListBox Name="lbClassifiers" DockPanel.Dock="Left" Width="200" SelectionChanged="LbClassifiers_SelectionChanged"/>
+    <ListBox Name="lbRelationships"/>
+
+  </DockPanel>
+</Window>

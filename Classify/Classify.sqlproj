@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <Name>Classifier</Name>
+    <Name>Classify</Name>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
     <ProjectGuid>{88dbfb98-7b5c-41f6-a77b-3a1057ff4295}</ProjectGuid>
@@ -56,5 +56,30 @@
   <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
   <ItemGroup>
     <Folder Include="Properties" />
+    <Folder Include="internal" />
+    <Folder Include="Views" />
+    <Folder Include="Stored Procedures" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="internal\Classifier.sql" />
+    <Build Include="internal\internal.sql" />
+    <Build Include="internal\ClassifierRelationship.sql" />
+    <Build Include="internal\ClassifierType.sql" />
+    <Build Include="Views\Classifier.sql" />
+    <Build Include="Stored Procedures\SaveClassifierType.sql" />
+    <Build Include="Stored Procedures\SaveClassifierRelationship.sql" />
+    <Build Include="Stored Procedures\SaveClassifier.sql" />
+    <Build Include="Views\ClassifierRelationship.sql" />
+    <Build Include="Views\ClassifierType.sql" />
+    <Build Include="internal\Code.sql" />
+    <Build Include="internal\GetCodeID.sql" />
+    <Build Include="Stored Procedures\DeleteClassifierType.sql" />
+    <Build Include="Stored Procedures\DeleteClassifier.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Local.publish.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="Classifier.refactorlog" />
   </ItemGroup>
 </Project>
