@@ -11,8 +11,8 @@
     <OutputType>Database</OutputType>
     <RootPath>
     </RootPath>
-    <RootNamespace>Classifier</RootNamespace>
-    <AssemblyName>Classifier</AssemblyName>
+    <RootNamespace>Classify</RootNamespace>
+    <AssemblyName>Classify</AssemblyName>
     <ModelCollation>1033, CI</ModelCollation>
     <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
     <DeployToDatabase>True</DeployToDatabase>
