@@ -1,9 +1,9 @@
 ﻿CREATE VIEW dbo.ClassifierType
 AS
 SELECT
-    c.CodeValue AS TypeCode
-  , ot.[Name]
-  , ot.[Description]
+    c.CodeValue AS ClassifierTypeCode
+  , ot.[Name] AS ClassifierTypeName
+  , ot.[Description] AS ClassifierTypeDescription
 FROM internal.ClassifierType AS ot
 INNER JOIN internal.Code AS c
   ON c.CodeID = ot.ClassifierTypeCodeID
