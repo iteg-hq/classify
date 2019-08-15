@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Type: {{ type_code }}</title>
+</head>
+<body>
+    <h1>Type: {{ type_code }}</h1>
+    <p>{{ name or "No name" }}</p>
+    <p>{{ description or "No description" }}</p>
+    <ul>
+{% for code, name, description in classifiers %}
+        <li><a href="/{{ type_code }}/{{ code }}">{{ code }} ({{ name }})</a></li>
+{% endfor %}
+    </ul>
+</body>
+</html>

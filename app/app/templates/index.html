@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+<h1>Classify</h1>
+<div class="container">
+  <div class="row">
+    <div class="col-sm">
+        <h2>Types</h2>
+        <ul>
+        {% for type_ in classifier_collection.types %}
+            <li>
+                <a href="/{{ type_.code }}">
+                    {% if type_.code == type_code %}
+                    <b>
+                    {% endif %}
+                    {{ type_.name }}
+                    {% if type_.code == type_code %}
+                    </b>
+                    {% endif %}
+                </a>
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+    <div class="col-sm">
+        <h2>Classifiers</h2>
+        {% if not type_code %}
+        <p><i>(Select a classifier type)</i></p>
+        {% else %}
+        <ul>
+        {% for classifier in classifier_collection.get_classifier_type_by_code(type_code).classifiers %}
+            <li>
+                <a href="/{{ type_code }}/{{ classifier.code }}">
+                    {% if classifier.code == classifier_code %}
+                    <b>
+                    {% endif %}
+                    {{ classifier.name }}
+                    {% if classifier.code == classifier_code %}
+                    </b>
+                    {% endif %}
+                </a>
+            </li>
+        {% endfor %}
+        {% endif %}
+        </ul>
+    </div>
+    <div class="col-sm">
+        <h2>Related classifiers</h2>
+        {% if not classifier_code %}
+        <p><i>(Select a classifier)</i></p>
+        {% else %}
+        <ul>
+        {% for group in classifier_collection.get_classifier_by_code(type_code, classifier_code).children|groupby("relationship_code") %}
+            <li>
+                <i>{{ group.grouper }}:</i>
+
+                {% if group.list|length > 1 %}
+                <ul>
+                {% for relationship in group.list %}
+                <li>
+                <a href="/{{ relationship.related_classifier.type_.code }}/{{ relationship.related_classifier.code }}">
+                {{ relationship.related_classifier.name }}
+                </a>
+                </li>
+                {% endfor %}
+                </ul>
+                {% else %}
+                <a href="/{{ group.list[0].related_classifier.type_.code }}/{{ group.list[0].related_classifier.code }}">
+                {{ group.list[0].related_classifier.name }}
+                </a>
+                {% endif %}
+
+            </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+  </div>
+</div>
+</body>
+</html>
