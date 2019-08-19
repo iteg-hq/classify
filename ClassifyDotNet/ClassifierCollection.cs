@@ -26,7 +26,7 @@ namespace Classify
 
         public static ClassifierCollection Load(ClassifierCollection collection, SqlConnection connection)
         {
-            using (var command = new SqlCommand("SELECT TypeCode, [Description] FROM dbo.ClassifierType;", connection))
+            using (var command = new SqlCommand("SELECT ClassifierTypeCode, ClassifierTypeDescription FROM dbo.ClassifierType;", connection))
             {
                 command.CommandType = CommandType.Text;
                 using (var reader = command.ExecuteReader())

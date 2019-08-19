@@ -3,7 +3,7 @@ AS
 SELECT
     c1.CodeValue AS ClassifierTypeCode
   , c2.CodeValue AS ClassifierCode
-  , c3.CodeValue AS RelationshipTypeCode
+  , c3.CodeValue AS ClassifierRelationshipTypeCode
   , c4.CodeValue AS RelatedClassifierTypeCode
   , c5.CodeValue AS RelatedClassifierCode
   , r.[Description]

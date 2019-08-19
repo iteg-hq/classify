@@ -1,5 +1,5 @@
 ﻿CREATE TABLE internal.Classifier (
-    ClassifierTypeCodeID NVARCHAR(100) NOT NULL
+    ClassifierTypeCodeID INT NOT NULL
   , ClassifierCodeID INT NOT NULL
   , [Name] NVARCHAR(100) NOT NULL DEFAULT ''
   , [Description] NVARCHAR(500) NOT NULL DEFAULT ''

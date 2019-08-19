@@ -1,4 +1,4 @@
-﻿CREATE VIEW dbo.Classifier
+﻿CREATE VIEW dbo.AllClassifiers
 AS
 SELECT
     ct.CodeValue AS ClassifierTypeCode
@@ -17,6 +17,4 @@ WHERE ot.rv = (
       AND it.ClassifierTypeCodeID = ot.ClassifierTypeCodeID
   )
   AND ot.IsDeleted = 0
-  AND ot.ClassifierTypeCodeID != 0 -- Not relationship types
-  AND ot.ClassifierCodeID != -1 -- Not classifier types
 ;

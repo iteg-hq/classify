@@ -21,4 +21,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="RelationshipTypeCodeID" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="d8aa49b5-6a7f-41c6-ac71-70f2acf6a207" ChangeDateTime="08/14/2019 12:45:12">
+    <Property Name="ElementName" Value="[dbo].[RelationshipType]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="ClassifierRelationshipType" />
+  </Operation>
 </Operations>

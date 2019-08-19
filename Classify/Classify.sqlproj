@@ -22,6 +22,8 @@
     <SqlServerVerification>False</SqlServerVerification>
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
     <TargetDatabaseSet>True</TargetDatabaseSet>
+    <GenerateSqlClrDdl>False</GenerateSqlClrDdl>
+    <GenerateSqlClrSymbols>False</GenerateSqlClrSymbols>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -59,27 +61,45 @@
     <Folder Include="internal" />
     <Folder Include="Views" />
     <Folder Include="Stored Procedures" />
+    <Folder Include="Setup" />
+    <Folder Include="internal\Tables" />
+    <Folder Include="internal\Stored Procedures" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="internal\Classifier.sql" />
     <Build Include="internal\internal.sql" />
-    <Build Include="internal\ClassifierRelationship.sql" />
-    <Build Include="internal\ClassifierType.sql" />
     <Build Include="Views\Classifier.sql" />
     <Build Include="Stored Procedures\SaveClassifierType.sql" />
     <Build Include="Stored Procedures\SaveClassifierRelationship.sql" />
-    <Build Include="Stored Procedures\SaveClassifier.sql" />
     <Build Include="Views\ClassifierRelationship.sql" />
     <Build Include="Views\ClassifierType.sql" />
-    <Build Include="internal\Code.sql" />
-    <Build Include="internal\GetCodeID.sql" />
     <Build Include="Stored Procedures\DeleteClassifierType.sql" />
+    <Build Include="Setup\setup.sql" />
+    <Build Include="Setup\Flag.sql" />
+    <Build Include="Setup\Country.sql" />
+    <Build Include="Setup\Currency.sql" />
+    <Build Include="Stored Procedures\DeleteClassifierRelationship.sql" />
+    <Build Include="internal\Tables\internal.Classifier.sql" />
+    <Build Include="internal\Stored Procedures\internal.SaveClassifier.sql" />
+    <Build Include="internal\Stored Procedures\internal.GetCodeID.sql" />
+    <Build Include="Stored Procedures\SaveClassifier.sql" />
+    <Build Include="Views\RelationshipType.sql" />
+    <Build Include="internal\Stored Procedures\internal.DeleteClassifier.sql" />
     <Build Include="Stored Procedures\DeleteClassifier.sql" />
+    <Build Include="Stored Procedures\SaveClassifierRelationshipType.sql" />
+    <Build Include="Views\AllClassifiers.sql" />
+    <Build Include="Setup\UKPostCodeArea.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Local.publish.xml" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Classifier.refactorlog" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="internal\Tables\internal.ClassifierRelationship.sql" />
+    <Build Include="internal\Tables\internal.Code.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Script.PostDeployment1.sql" />
   </ItemGroup>
 </Project>

@@ -87,7 +87,7 @@ def load(connectionstring):
         classifier_collection.add_classifier(*row)
 
 
-    cursor.execute("SELECT ClassifierTypeCode, ClassifierCode, RelationshipTypeCode, RelatedClassifierTypeCode, RelatedClassifierCode, [Description], [Weight] FROM dbo.ClassifierRelationship")
+    cursor.execute("SELECT ClassifierTypeCode, ClassifierCode, ClassifierRelationshipTypeCode, RelatedClassifierTypeCode, RelatedClassifierCode, [Description], [Weight] FROM dbo.ClassifierRelationship")
     for row in cursor.fetchall():
         classifier_collection.add_classifier_relationship(*row)
 

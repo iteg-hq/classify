@@ -6,29 +6,35 @@
 AS
 SET NOCOUNT, XACT_ABORT ON;
 
+IF @Code = '' THROW 51000, 'Code can not be empty', 1;
+IF @Code IS NULL THROW 51000, 'Code can not be NULL', 1;
+
+-- If the Classifier Type classifier does not exist, create it;
 IF NOT EXISTS (
     SELECT 1
     FROM dbo.ClassifierType
-    WHERE TypeCode = @TypeCode
+    WHERE ClassifierTypeCode = @TypeCode
   )
   EXEC dbo.SaveClassifierType @TypeCode;
- 
-DECLARE @ClassifierTypeCodeID INT;
-DECLARE @ClassifierCodeID INT;
-
-EXEC internal.GetCodeID @TypeCode, @ClassifierTypeCodeID OUTPUT;
-EXEC internal.GetCodeID @Code, @ClassifierCodeID OUTPUT;
 
 
-INSERT INTO internal.Classifier (
-  ClassifierTypeCodeID
-, ClassifierCodeID
-, [Name]
-, [Description]
-)
+EXEC internal.SaveClassifier @TypeCode, @Code, @Name, @Description;
+
+
+/*
+DECLARE @TypeCodeID INT;
+
+EXEC internal.GetCodeID @TypeCode, @TypeCodeID OUTPUT;
+
+INSERT INTO internal.ClassifierType (
+    ClassifierTypeCodeID
+  , [Name]
+  , [Description]
+  )
 VALUES (
-    @ClassifierTypeCodeID
-  , @ClassifierCodeID
+    @TypeCodeID
   , COALESCE(@Name, '')
   , COALESCE(@Description, '')
-)
+  )
+;
+*/

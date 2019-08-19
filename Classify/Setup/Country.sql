@@ -1,6 +1,6 @@
 ﻿CREATE PROCEDURE setup.Country
 AS
-EXEC SaveClassifierType 'Country', 'Country', 'ISO 3166 two-letter country codes.'
+EXEC SaveClassifierType 'Country', 'Country', 'An ISO 3166 two-letter country code.'
 EXEC SaveClassifier 'Country', 'AF', 'Afghanistan';
 EXEC SaveClassifier 'Country', 'AX', 'Åland Islands';
 EXEC SaveClassifier 'Country', 'AL', 'Albania';

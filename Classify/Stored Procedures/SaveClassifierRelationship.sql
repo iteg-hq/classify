@@ -25,6 +25,15 @@ IF NOT EXISTS (
   )
   EXEC dbo.SaveClassifier @RelatedClassifierTypeCode, @RelatedClassifierCode;
 
+IF NOT EXISTS (
+    SELECT 1
+    FROM dbo.ClassifierRelationshipType
+    WHERE ClassifierRelationshipTypeCode = @ClassifierRelationshipType
+  )
+  EXEC dbo.SaveClassifierRelationshipType @ClassifierRelationshipType
+
+
+
 DECLARE @ClassifierTypeCodeID INT;
 DECLARE @ClassifierCodeID INT;
 DECLARE @ClassifierRelationshipTypeID INT;
