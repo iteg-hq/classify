@@ -40,7 +40,7 @@ namespace Classify
                     }
                 }
             }
-            using (var command = new SqlCommand("SELECT ClassifierTypeCode, ClassifierCode, ClassifierDescription FROM dbo.Classifier ORDER BY rv", connection))
+            using (var command = new SqlCommand("SELECT ClassifierTypeCode, ClassifierCode, ClassifierDescription FROM dbo.Classifier", connection))
             {
                 command.CommandType = CommandType.Text;
                 using (var reader = command.ExecuteReader())
@@ -56,7 +56,7 @@ namespace Classify
                 }
             }
 
-            using (var command = new SqlCommand("SELECT ClassifierTypeCode, ClassifierCode, RelationshipTypeCode, RelatedClassifierTypeCode, RelatedClassifierCode, [Description], [Weight] FROM dbo.ClassifierRelationship ORDER BY rv", connection))
+            using (var command = new SqlCommand("SELECT ClassifierTypeCode, ClassifierCode, ClassifierRelationshipTypeCode, RelatedClassifierTypeCode, RelatedClassifierCode, [Description], [Weight] FROM dbo.ClassifierRelationship ORDER BY rv", connection))
             {
                 command.CommandType = CommandType.Text;
                 using (var reader = command.ExecuteReader())
