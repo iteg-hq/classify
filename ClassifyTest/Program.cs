@@ -17,10 +17,10 @@ namespace Classify
                 conn.Open();
                 ClassifierCollection.Load(coll, conn);
             }
-            foreach (var c in coll["Bordereau"]["IndigoRisk"].GetRelatedByRelationshipCode("HasUnderwritingYear"))
+            foreach (var c in coll["Bordereau"]["IndigoRisk"]["UnderwritingYear"])
             {
-                Console.WriteLine(c.GetRelatedByRelationshipCode("HasInceptionDate").First());
-                Console.WriteLine(c.GetRelatedByRelationshipCode("HasExpiryDate").First());
+                Console.WriteLine(c.GetRelatedByRelationshipCode("InceptionDate").First());
+                Console.WriteLine(c.GetRelatedByRelationshipCode("ExpiryDate").First());
             }
             Console.ReadLine();
         }

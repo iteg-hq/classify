@@ -9,6 +9,8 @@ namespace Classify
 
         public ICollection<ClassifierRelationship> Relationships = new List<ClassifierRelationship>();
 
+        public IEnumerable<Classifier> this[string relationshipCode] => GetRelatedByRelationshipCode(relationshipCode);
+
         public IEnumerable<Classifier> GetRelatedByRelationshipCode(string relationshipCode)
         {
             bool found = false;
