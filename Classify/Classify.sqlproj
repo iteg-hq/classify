@@ -13,7 +13,7 @@
     </RootPath>
     <RootNamespace>Classify</RootNamespace>
     <AssemblyName>Classify</AssemblyName>
-    <ModelCollation>1033, CI</ModelCollation>
+    <ModelCollation>1030,CI</ModelCollation>
     <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
     <DeployToDatabase>True</DeployToDatabase>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
@@ -24,6 +24,9 @@
     <TargetDatabaseSet>True</TargetDatabaseSet>
     <GenerateSqlClrDdl>False</GenerateSqlClrDdl>
     <GenerateSqlClrSymbols>False</GenerateSqlClrSymbols>
+    <DefaultCollation>Danish_Norwegian_CI_AS</DefaultCollation>
+    <Recovery>SIMPLE</Recovery>
+    <QueryStoreCaptureMode>None</QueryStoreCaptureMode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
