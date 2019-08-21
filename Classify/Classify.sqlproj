@@ -90,6 +90,7 @@
     <Build Include="Stored Procedures\DeleteClassifier.sql" />
     <Build Include="Stored Procedures\SaveClassifierRelationshipType.sql" />
     <Build Include="Setup\UKPostCodeArea.sql" />
+    <Build Include="Stored Procedures\About.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Local.publish.xml" />
