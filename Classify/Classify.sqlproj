@@ -103,6 +103,6 @@
     <Build Include="internal\Tables\internal.Code.sql" />
   </ItemGroup>
   <ItemGroup>
-    <PostDeploy Include="Script.PostDeployment1.sql" />
+    <PostDeploy Include="Script.PostDeployment.sql" />
   </ItemGroup>
 </Project>
