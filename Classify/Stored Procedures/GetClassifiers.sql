@@ -8,6 +8,8 @@ SELECT
   , ClassifierCode
   , ClassifierName
   , ClassifierDescription
+  , UpdatedBy
+  , UpdatedOn
 FROM dbo.Classifier
 WHERE ClassifierTypeCode = @ClassifierTypeCode
 ;
