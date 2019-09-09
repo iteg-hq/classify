@@ -1,5 +1,5 @@
 ﻿CREATE PROCEDURE dbo.DeleteClassifier
-    @TypeCode NVARCHAR(100)
+    @ClassifierTypeCode NVARCHAR(100)
   , @ClassifierCode NVARCHAR(100)
 AS
 SET NOCOUNT, XACT_ABORT ON;
@@ -7,7 +7,7 @@ IF @ClassifierCode = '' THROW 51000, 'Classifier Code cannot be blank', 1;
 
 DECLARE @ClassifierTypeCodeID INT;
 DECLARE @ClassifierCodeID INT;
-EXEC internal.GetCodeID @TypeCode, @ClassifierTypeCodeID OUTPUT;
+EXEC internal.GetCodeID @ClassifierTypeCode, @ClassifierTypeCodeID OUTPUT;
 EXEC internal.GetCodeID @ClassifierCode, @ClassifierCodeID OUTPUT;
 
 -- Close all classifier relationships (inbound and outbound)

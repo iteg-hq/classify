@@ -12,13 +12,6 @@ IF @NewClassifierCode = '' THROW 51000, '@NewClassifierCode cannot be blank', 1;
 IF @ClassifierCode = @NewClassifierCode
   RETURN
 
-IF EXISTS (
-    SELECT 1
-    FROM Classifier
-    WHERE ClassifierTypeCode = @ClassifierTypeCode
-      AND ClassifierCode = @NewClassifierCode
-  ) THROW 51000, 'Target classifier already exists', 1;
-
 -- Get IDs
 DECLARE @ClassifierTypeCodeID INT;
 DECLARE @ClassifierCodeID INT;

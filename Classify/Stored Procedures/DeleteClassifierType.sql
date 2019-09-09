@@ -1,10 +1,10 @@
 ﻿CREATE PROCEDURE dbo.DeleteClassifierType
-    @TypeCode NVARCHAR(100)
+    @ClassifierTypeCode NVARCHAR(100)
 AS
 SET NOCOUNT, XACT_ABORT ON;
 
 DECLARE @ClassifierTypeCodeID INT;
-EXEC internal.GetCodeID @TypeCode, @ClassifierTypeCodeID OUTPUT;
+EXEC internal.GetCodeID @ClassifierTypeCode, @ClassifierTypeCodeID OUTPUT;
 
 -- Delete all type member relationships (inbound and outbound)
 INSERT INTO internal.ClassifierRelationship (
@@ -46,4 +46,4 @@ FROM internal.Classifier
 WHERE ClassifierTypeCodeID = @ClassifierTypeCodeID;
 
 -- Then delete the type
-EXEC internal.DeleteClassifier @TypeCode, '';
+EXEC internal.DeleteClassifier @ClassifierTypeCode, '';

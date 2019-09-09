@@ -1,22 +1,22 @@
 ﻿CREATE PROCEDURE dbo.SaveClassifierType
-    @TypeCode NVARCHAR(100)
+    @ClassifierTypeCode NVARCHAR(100)
   , @Name NVARCHAR(100) = NULL
   , @Description NVARCHAR(500) = NULL
 AS
 SET NOCOUNT, XACT_ABORT ON;
 
-IF @TypeCode = '' THROW 51000, 'Type code can not be empty', 1;
-IF @TypeCode IS NULL THROW 51000, 'Type code can not be NULL', 1;
+IF @ClassifierTypeCode = '' THROW 51000, 'Type code can not be empty', 1;
+IF @ClassifierTypeCode IS NULL THROW 51000, 'Type code can not be NULL', 1;
 
-IF @Name IS NULL SET @Name = @TypeCode;
+IF @Name IS NULL SET @Name = @ClassifierTypeCode;
 
-EXEC internal.SaveClassifier @TypeCode, '', @Name, @Description;
+EXEC internal.SaveClassifier @ClassifierTypeCode, '', @Name, @Description;
 
 
 /*
-DECLARE @TypeCodeID INT;
+DECLARE @ClassifierTypeCodeID INT;
 
-EXEC internal.GetCodeID @TypeCode, @TypeCodeID OUTPUT;
+EXEC internal.GetCodeID @ClassifierTypeCode, @ClassifierTypeCodeID OUTPUT;
 
 INSERT INTO internal.ClassifierType (
     ClassifierTypeCodeID
@@ -24,7 +24,7 @@ INSERT INTO internal.ClassifierType (
   , [Description]
   )
 VALUES (
-    @TypeCodeID
+    @ClassifierTypeCodeID
   , COALESCE(@Name, '')
   , COALESCE(@Description, '')
   )
