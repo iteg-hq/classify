@@ -4,6 +4,8 @@ SELECT
     c.CodeValue AS ClassifierRelationshipTypeCode
   , ot.[Name] AS ClassifierRelationshipTypeName
   , ot.[Description] AS ClassifierRelationshipTypeDescription
+  , ot.UpdatedBy
+  , ot.UpdatedOn
 FROM internal.Classifier AS ot
 INNER JOIN internal.Code AS c
   ON c.CodeID = ot.ClassifierCodeID

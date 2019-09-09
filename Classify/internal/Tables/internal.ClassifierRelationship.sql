@@ -9,5 +9,6 @@
   , IsDeleted BIT NOT NULL DEFAULT 0
   , rv ROWVERSION
   , UpdatedBy SYSNAME NOT NULL DEFAULT CURRENT_USER
+  , UpdatedOn DATETIME2(7) NOT NULL DEFAULT CURRENT_TIMESTAMP
   , CONSTRAINT PK_ClassifierRelationship PRIMARY KEY (ClassifierTypeCodeID, ClassifierCodeID, RelationshipTypeCodeID, RelatedClassifierTypeCodeID, RelatedClassifierCodeID, rv)
 )

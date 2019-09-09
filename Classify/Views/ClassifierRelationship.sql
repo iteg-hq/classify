@@ -8,7 +8,8 @@ SELECT
   , c5.CodeValue AS RelatedClassifierCode
   , r.[Description]
   , r.[Weight]
-  , r.rv
+  , r.UpdatedBy
+  , r.UpdatedOn
 FROM internal.ClassifierRelationship AS r
 INNER JOIN internal.Code AS c1
   ON c1.CodeID = r.ClassifierTypeCodeID

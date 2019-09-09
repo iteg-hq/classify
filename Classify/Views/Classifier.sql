@@ -5,6 +5,8 @@ SELECT
   , c.CodeValue AS ClassifierCode
   , ot.[Name] AS ClassifierName
   , ot.[Description] AS ClassifierDescription
+  , ot.UpdatedBy
+  , ot.UpdatedOn
 FROM internal.Classifier AS ot
 INNER JOIN internal.Code AS c
   ON c.CodeID = ot.ClassifierCodeID
