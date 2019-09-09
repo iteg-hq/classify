@@ -5,43 +5,15 @@ namespace Classify
 {
     public class BaseClassifier
     {
-        private string code;
-        private string description;
+        public string Code;
+        public string Name;
+        public string Description;
 
-        public bool IsDirty;
-        public string Code
-        {
-            get { return code; }
-            set
-            {
-                if (value != code)
-                {
-                    IsDirty = true;
-                    code = value;
-                }
-            }
-        }
-
-        public string Description
-        {
-            get { return description; }
-            set
-            {
-                if (value != description)
-                {
-                    IsDirty = true;
-                    description = value;
-                }
-            }
-        }
-
-        public override string ToString() => Code;
-
-        public BaseClassifier(string code, string description = "")
+        public BaseClassifier(string code, string name, string description = "")
         {
             Code = code;
+            Name = name;
             Description = description;
-            IsDirty = false;
         }
     }
 }

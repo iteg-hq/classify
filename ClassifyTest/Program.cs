@@ -9,20 +9,25 @@ namespace Classify
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            ClassifierCollection coll = new ClassifierCollection();
-            using (var conn = new SqlConnection("Server=localhost;Database=Classify;Trusted_Connection=True;"))
-            {
-                conn.Open();
-                ClassifierCollection.Load(coll, conn);
-            }
-            foreach (var c in coll["Bordereau"]["IndigoRisk"]["UnderwritingYear"])
-            {
-                Console.WriteLine(c.GetRelatedByRelationshipCode("InceptionDate").First());
-                Console.WriteLine(c.GetRelatedByRelationshipCode("ExpiryDate").First());
-            }
-            Console.ReadLine();
+            DAL dal = new DAL("Server=localhost;Database=Classify;Trusted_Connection=True;");
+            dal.Reset();
+            ClassifierType t = dal.SaveClassifierType("country", "Country", "Lande" );
+            var dk = t.AddMember("DK", "Denmark", "Danmark");
+            t.AddMember("DE", "Germany", "Deutschland");
+            t.AddMember("SE", "Sweden", "Sverige")
+                .AddRelated("Neighbor", dk);
+
+
+
+            /*
+            dal.GetContext(t).AddMember("cl", "Cl", "desc"); // Classifier
+            dal["test"]["cl"]["rel"];
+
+            t.AddMember("c", "C", "Desc");
+            Console.WriteLine(t.Description)
+            */
         }
     }
 }

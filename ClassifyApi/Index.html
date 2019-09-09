@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Classify</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="static/style.css">
+
+  <script src="static/classify.js"></script>
+  <script src="static/script.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm">
+        <div id="types"></div>
+        <hr />
+        <div>
+          <form id="addType">
+            <div class="col-auto">
+              <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                  <div class="input-group-text"><img src="static/add.png" /></div>
+                </div>
+                <input type="text" class="form-control" id="typeCode" placeholder="type code">
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="col-sm">
+        <div id="classifiers"></div>
+        <hr />
+        <div>
+          <form id="addClassifier">
+            <div class="col-auto">
+              <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                  <div class="input-group-text"><img src="static/add.png" /></div>
+                </div>
+                <input type="text" class="form-control" id="classifierCode" placeholder="classifier code">
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="col-sm">
+        <div id="related"></div>
+        <form id="addRelated">
+          <div class="form-group">
+            <label for="exampleFormControlSelect1">Example select</label>
+            <select class="form-control" id="exampleFormControlSelect1">
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+            </select>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</body>
+</html>

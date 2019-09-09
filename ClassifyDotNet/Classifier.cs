@@ -1,34 +1,54 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Classify
 {
-    public class Classifier : BaseClassifier
+    public class Classifier : IClassifier
     {
-        public ClassifierType ClassifierType;
-
-        public ICollection<ClassifierRelationship> Relationships = new List<ClassifierRelationship>();
-
-        public IEnumerable<Classifier> this[string relationshipCode] => GetRelatedByRelationshipCode(relationshipCode);
-
-        public IEnumerable<Classifier> GetRelatedByRelationshipCode(string relationshipCode)
+        private readonly DAL dal;
+        private readonly string typeCode;
+        public Classifier(DAL dal, string typeCode, string code)
         {
-            bool found = false;
-            foreach (var r in Relationships)
-            {
-                if (r.RelationshipTypeCode == relationshipCode)
-                {
-                    found = true;
-                    yield return r.RelatedClassifier;
-                }
-            }
-            if (!found) throw new KeyNotFoundException(relationshipCode);
+            this.dal = dal;
+            this.typeCode = typeCode;
+            Code = code;
         }
 
-        public Classifier(ClassifierType classifierType, string code, string description = "")
-            : base(code, description)
+        public override string ToString()
         {
-            ClassifierType = classifierType;
+            return $"Classifier {ClassifierType.Code}:{Code}";
+        }
+
+        public ClassifierType ClassifierType
+        {
+            get => dal.GetClassifierType(typeCode);
+        }
+
+        public string Code { get; private set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+
+        public string TypeCode => ClassifierType.Code;
+
+        public IEnumerable<ClassifierRelationship> GetRelated()
+        {
+            return dal.GetClassifierRelationships(typeCode, Code);
+        }
+        public IEnumerable<Classifier> GetRelated(string relationshipTypeCode)
+        {
+            return GetRelated().Where(r => r.RelationshipTypeCode == relationshipTypeCode).Select(r => r.RelatedClassifier);
+        }
+
+        public Classifier AddRelated(string relationshipType, Classifier relatedClassifier, string description="", double weight=100.0)
+        {
+            dal.SaveClassifierRelationship(ClassifierType.Code, Code, relationshipType, relatedClassifier.TypeCode, relatedClassifier.Code, description, weight);
+            return this;
+        }
+
+        public IEnumerable<string> GetRelationshipTypeCodes()
+        {
+            return GetRelated().Select(r => r.RelationshipTypeCode).Distinct();
         }
     }
 }

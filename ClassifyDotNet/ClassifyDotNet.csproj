@@ -43,10 +43,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseClassifier.cs" />
-    <Compile Include="ClassifierCollection.cs" />
+    <Compile Include="IClassifierRelationship.cs" />
+    <Compile Include="IClassifierType.cs" />
+    <Compile Include="IClassifier.cs" />
+    <Compile Include="DAL.cs" />
     <Compile Include="Classifier.cs" />
     <Compile Include="ClassifierRelationship.cs" />
     <Compile Include="ClassifierType.cs" />
+    <Compile Include="DAL_.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

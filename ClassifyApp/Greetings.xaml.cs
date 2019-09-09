@@ -29,41 +29,37 @@ namespace ClassifierApp
     /// </summary>
     public partial class MainWindow : Window
     {
-        public ClassifierCollection ClassifierCollection;
+        public DAL CAL;
         public MainWindow()
         {
+            /*
             var coll = new ServiceCollection();
             coll.AddTransient<ICollection<ClassifierType>, ObservableCollection<ClassifierType>>();
             coll.AddTransient<ICollection<Classifier>, ObservableCollection<Classifier>>();
             coll.AddTransient<ClassifierCollection, ClassifierCollection>();
             var prov = coll.BuildServiceProvider();
-
+            */
             string connectionString = "Data Source=localhost;Integrated Security=True;Database=Classifier";
 
-            ClassifierCollection = prov.GetRequiredService<ClassifierCollection>();
-            using (var conn = new SqlConnection(connectionString))
-            {
-                conn.Open();
-                ClassifierCollection.Load(ClassifierCollection, conn);
-            }
+            CAL = new DAL(connectionString);
 
             InitializeComponent();
             //this.DataContext = ClassifierCollection;
-            lbClassifierTypes.ItemsSource = ClassifierCollection.ClassifierTypes;
+            //lbClassifierTypes.ItemsSource = CAL.ClassifierTypes;
         }
 
         private void LbClassifierTypes_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ClassifierType type = (ClassifierType)lbClassifierTypes.SelectedItem;
-            if (type == null) return;
-            lbClassifiers.ItemsSource = type.Members;
+            //ClassifierType type = (ClassifierType)lbClassifierTypes.SelectedItem;
+            //if (type == null) return;
+            //lbClassifiers.ItemsSource = type.GetMembers();
         }
 
         private void LbClassifiers_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Classifier classifier = (Classifier)lbClassifiers.SelectedItem;
-            if (classifier == null) return;
-            lbRelationships.ItemsSource = classifier.Relationships;
+            //IClassifier classifier = (IClassifier)lbClassifiers.SelectedItem;
+            //if (classifier == null) return;
+            //lbRelationships.ItemsSource = classifier.Relationships;
         }
     }
 }

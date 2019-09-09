@@ -4,31 +4,45 @@ using System.Linq;
 
 namespace Classify
 {
-    public class ClassifierType : BaseClassifier
+    public class ClassifierType : IClassifierType
     {
-        public ICollection<Classifier> Members = new List<Classifier>();
+        private readonly DAL dal;
 
-        public Classifier this[string code]
+        public ClassifierType(DAL dal, string code)
         {
-            get
-            {
-                return Members.First(t => t.Code == code);
-            }
+            this.dal = dal;
+            Code = code;
         }
-        public ClassifierType(string code, string description = "")
-            : base(code, description)
+        public override string ToString()
         {
+            return $"ClassifierType {Code}";
         }
 
-        public Classifier AddMember(string code, string description = "")
+        public string Code { get; private set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+
+        public Classifier AddMember(IClassifier classifier)
+            => AddMember(classifier.Code, classifier.Name, classifier.Description);
+
+        public Classifier AddMember(string code, string name, string description)
         {
-            if(Members.Any(c => c.Code == code))
-            {
-                throw new Exception(code);
-            }
-            var classifier = new Classifier(this, code, description);
-            Members.Add(classifier);
-            return classifier;
+            return dal.SaveClassifier(Code, code, name, description);
+        }
+
+        public ICollection<Classifier> GetMembers()
+            => dal.GetClassifiers(Code).ToList();
+
+        public Classifier GetMember(string classifierCode)
+        {
+            return GetMembers().Single(c => c.Code == classifierCode);
+        }
+
+        public Classifier this[string code] => GetMember(code);
+
+        public bool DeleteMember(string classifierCode)
+        {
+            return dal.TryDeleteClassifier(Code, classifierCode);
         }
     }
 }
