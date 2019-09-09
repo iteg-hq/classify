@@ -86,11 +86,15 @@
     <Build Include="internal\Stored Procedures\internal.GetCodeID.sql" />
     <Build Include="Stored Procedures\SaveClassifier.sql" />
     <Build Include="Views\ClassifierRelationshipType.sql" />
-    <Build Include="internal\Stored Procedures\internal.DeleteClassifier.sql" />
     <Build Include="Stored Procedures\DeleteClassifier.sql" />
     <Build Include="Stored Procedures\SaveClassifierRelationshipType.sql" />
     <Build Include="Setup\UKPostCodeArea.sql" />
     <Build Include="Stored Procedures\About.sql" />
+    <Build Include="Stored Procedures\GetClassifierTypes.sql" />
+    <Build Include="Stored Procedures\GetClassifiers.sql" />
+    <Build Include="Stored Procedures\GetClassifierRelationships.sql" />
+    <Build Include="Stored Procedures\GetClassifierType.sql" />
+    <Build Include="Stored Procedures\CopyClassifier.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Local.publish.xml" />
