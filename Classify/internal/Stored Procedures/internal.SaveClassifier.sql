@@ -13,10 +13,10 @@ EXEC internal.GetCodeID @TypeCode, @ClassifierTypeCodeID OUTPUT;
 EXEC internal.GetCodeID @Code, @ClassifierCodeID OUTPUT;
 
 INSERT INTO internal.Classifier (
-  ClassifierTypeCodeID
-, ClassifierCodeID
-, [Name]
-, [Description]
+    ClassifierTypeCodeID
+  , ClassifierCodeID
+  , [Name]
+  , [Description]
 )
 VALUES (
     @ClassifierTypeCodeID
