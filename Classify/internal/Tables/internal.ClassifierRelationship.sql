@@ -1,7 +1,7 @@
 ﻿CREATE TABLE internal.ClassifierRelationship (
     ClassifierTypeCodeID INT NOT NULL
   , ClassifierCodeID INT NOT NULL
-  , RelationshipTypeCodeID INT NOT NULL
+  , ClassifierRelationshipTypeCodeID INT NOT NULL
   , RelatedClassifierTypeCodeID INT NOT NULL
   , RelatedClassifierCodeID INT NOT NULL
   , [Description] NVARCHAR(500) NOT NULL DEFAULT ''
@@ -10,5 +10,5 @@
   , rv ROWVERSION
   , UpdatedBy SYSNAME NOT NULL DEFAULT CURRENT_USER
   , UpdatedOn DATETIME2(7) NOT NULL DEFAULT CURRENT_TIMESTAMP
-  , CONSTRAINT PK_ClassifierRelationship PRIMARY KEY (ClassifierTypeCodeID, ClassifierCodeID, RelationshipTypeCodeID, RelatedClassifierTypeCodeID, RelatedClassifierCodeID, rv)
+  , CONSTRAINT PK_ClassifierRelationship PRIMARY KEY (ClassifierTypeCodeID, ClassifierCodeID, ClassifierRelationshipTypeCodeID, RelatedClassifierTypeCodeID, RelatedClassifierCodeID, rv)
 )

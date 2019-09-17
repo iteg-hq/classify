@@ -22,7 +22,7 @@ EXEC internal.GetCodeID @RelatedClassifierCode,      @RelatedClassifierCodeID OU
 INSERT INTO internal.ClassifierRelationship (
     ClassifierTypeCodeID
   , ClassifierCodeID
-  , RelationshipTypeCodeID
+  , ClassifierRelationshipTypeCodeID
   , RelatedClassifierTypeCodeID
   , RelatedClassifierCodeID
   , IsDeleted

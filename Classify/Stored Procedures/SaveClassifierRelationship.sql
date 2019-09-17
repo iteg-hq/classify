@@ -49,7 +49,7 @@ EXEC internal.GetCodeID @RelatedClassifierCode, @RelatedClassifierCodeID OUTPUT;
 INSERT INTO internal.ClassifierRelationship (
     ClassifierTypeCodeID
   , ClassifierCodeID
-  , RelationshipTypeCodeID
+  , ClassifierRelationshipTypeCodeID
   , RelatedClassifierTypeCodeID
   , RelatedClassifierCodeID
   , [Description]

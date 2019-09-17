@@ -10,7 +10,7 @@ EXEC internal.GetCodeID @ClassifierTypeCode, @ClassifierTypeCodeID OUTPUT;
 INSERT INTO internal.ClassifierRelationship (
     ClassifierTypeCodeID
   , ClassifierCodeID
-  , RelationshipTypeCodeID
+  , ClassifierRelationshipTypeCodeID
   , RelatedClassifierTypeCodeID
   , RelatedClassifierCodeID
   , Description
@@ -19,7 +19,7 @@ INSERT INTO internal.ClassifierRelationship (
 SELECT
     ClassifierTypeCodeID
   , ClassifierCodeID
-  , RelationshipTypeCodeID
+  , ClassifierRelationshipTypeCodeID
   , RelatedClassifierTypeCodeID
   , RelatedClassifierCodeID
   , Description
@@ -46,4 +46,14 @@ FROM internal.Classifier
 WHERE ClassifierTypeCodeID = @ClassifierTypeCodeID;
 
 -- Then delete the type
-EXEC internal.DeleteClassifier @ClassifierTypeCode, '';
+INSERT INTO internal.Classifier (
+    ClassifierTypeCodeID
+  , ClassifierCodeID
+  , IsDeleted
+  )
+VALUES (
+    @ClassifierTypeCodeID
+  , -1
+  , 1
+  )
+;

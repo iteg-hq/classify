@@ -16,7 +16,7 @@ INNER JOIN internal.Code AS c1
 INNER JOIN internal.Code AS c2
   ON c2.CodeID = r.ClassifierCodeID
 INNER JOIN internal.Code AS c3
-  ON c3.CodeID = r.RelationshipTypeCodeID
+  ON c3.CodeID = r.ClassifierRelationshipTypeCodeID
 INNER JOIN internal.Code AS c4
   ON c4.CodeID = r.RelatedClassifierTypeCodeID
 INNER JOIN internal.Code AS c5
@@ -26,7 +26,7 @@ WHERE r.rv = (
     FROM internal.ClassifierRelationship AS it
     WHERE it.ClassifierCodeID = r.ClassifierCodeID
       AND it.ClassifierTypeCodeID = r.ClassifierTypeCodeID
-      AND it.RelationshipTypeCodeID = r.RelationshipTypeCodeID
+      AND it.ClassifierRelationshipTypeCodeID = r.ClassifierRelationshipTypeCodeID
       AND it.RelatedClassifierCodeID = r.RelatedClassifierCodeID
       AND it.RelatedClassifierTypeCodeID = r.RelatedClassifierTypeCodeID
   )

@@ -28,4 +28,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="ClassifierRelationshipType" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="1889b8ec-5f65-49c6-8b31-1b2c2b47b5db" ChangeDateTime="09/12/2019 15:05:43">
+    <Property Name="ElementName" Value="[internal].[ClassifierRelationship].[RelationshipTypeCodeID]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[internal].[ClassifierRelationship]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ClassifierRelationshipTypeCodeID" />
+  </Operation>
 </Operations>

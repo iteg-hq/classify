@@ -14,7 +14,7 @@ EXEC internal.GetCodeID @ClassifierCode, @ClassifierCodeID OUTPUT;
 INSERT INTO internal.ClassifierRelationship (
     ClassifierTypeCodeID
   , ClassifierCodeID
-  , RelationshipTypeCodeID
+  , ClassifierRelationshipTypeCodeID
   , RelatedClassifierTypeCodeID
   , RelatedClassifierCodeID
   , IsDeleted    
@@ -22,7 +22,7 @@ INSERT INTO internal.ClassifierRelationship (
 SELECT DISTINCT
     ClassifierTypeCodeID
   , ClassifierCodeID
-  , RelationshipTypeCodeID
+  , ClassifierRelationshipTypeCodeID
   , RelatedClassifierTypeCodeID
   , RelatedClassifierCodeID
   , 1

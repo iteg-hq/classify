@@ -25,7 +25,7 @@ EXEC internal.GetCodeID @NewClassifierCode, @NewClassifierCodeID OUTPUT;
 INSERT INTO internal.ClassifierRelationship (
     ClassifierTypeCodeID
   , ClassifierCodeID
-  , RelationshipTypeCodeID
+  , ClassifierRelationshipTypeCodeID
   , RelatedClassifierTypeCodeID
   , RelatedClassifierCodeID
   , [Description]
@@ -35,7 +35,7 @@ INSERT INTO internal.ClassifierRelationship (
 SELECT
     ClassifierTypeCodeID
   , @NewClassifierCodeID
-  , RelationshipTypeCodeID
+  , ClassifierRelationshipTypeCodeID
   , RelatedClassifierTypeCodeID
   , RelatedClassifierCodeID
   , [Description]
@@ -49,7 +49,7 @@ WHERE ClassifierTypeCodeID = @ClassifierTypeCodeID
     FROM internal.ClassifierRelationship AS it
     WHERE it.ClassifierCodeID = ot.ClassifierCodeID
       AND it.ClassifierTypeCodeID = ot.ClassifierTypeCodeID
-      AND it.RelationshipTypeCodeID = ot.RelationshipTypeCodeID
+      AND it.ClassifierRelationshipTypeCodeID = ot.ClassifierRelationshipTypeCodeID
       AND it.RelatedClassifierCodeID = ot.RelatedClassifierCodeID
       AND it.RelatedClassifierTypeCodeID = ot.RelatedClassifierTypeCodeID
   )
@@ -59,7 +59,7 @@ WHERE ClassifierTypeCodeID = @ClassifierTypeCodeID
 INSERT INTO internal.ClassifierRelationship (
     ClassifierTypeCodeID
   , ClassifierCodeID
-  , RelationshipTypeCodeID
+  , ClassifierRelationshipTypeCodeID
   , RelatedClassifierTypeCodeID
   , RelatedClassifierCodeID
   , [Description]
@@ -69,7 +69,7 @@ INSERT INTO internal.ClassifierRelationship (
 SELECT
     ClassifierTypeCodeID
   , ClassifierCodeID
-  , RelationshipTypeCodeID
+  , ClassifierRelationshipTypeCodeID
   , RelatedClassifierTypeCodeID
   , @NewClassifierCodeID
   , [Description]
@@ -83,7 +83,7 @@ WHERE RelatedClassifierTypeCodeID = @ClassifierTypeCodeID
     FROM internal.ClassifierRelationship AS it
     WHERE it.ClassifierTypeCodeID = ot.ClassifierTypeCodeID
       AND it.ClassifierCodeID = ot.ClassifierCodeID
-      AND it.RelationshipTypeCodeID = ot.RelationshipTypeCodeID
+      AND it.ClassifierRelationshipTypeCodeID = ot.ClassifierRelationshipTypeCodeID
       AND it.RelatedClassifierTypeCodeID = ot.RelatedClassifierTypeCodeID
       AND it.RelatedClassifierCodeID = ot.RelatedClassifierCodeID
   )
