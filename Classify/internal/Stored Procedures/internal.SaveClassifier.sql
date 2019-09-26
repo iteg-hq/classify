@@ -8,18 +8,33 @@ SET NOCOUNT, XACT_ABORT ON;
 
 DECLARE @ClassifierTypeCodeID INT;
 DECLARE @ClassifierCodeID INT;
+DECLARE @ClassifierID INT;
 
 EXEC internal.GetCodeID @ClassifierTypeCode, @ClassifierTypeCodeID OUTPUT;
 EXEC internal.GetCodeID @ClassifierCode, @ClassifierCodeID OUTPUT;
 
+-- TODO: Pick up attributes for change detection?
+SELECT TOP 1 @ClassifierID = ClassifierID
+FROM internal.Classifier
+WHERE ClassifierTypeCodeID = @ClassifierTypeCodeID
+  AND ClassifierCodeID = @ClassifierCodeID
+;
+
+IF @ClassifierID IS NULL
+BEGIN
+  SET @ClassifierID = NEXT VALUE FOR internal.Identifier
+END
+
 INSERT INTO internal.Classifier (
-    ClassifierTypeCodeID
+    ClassifierID
+  , ClassifierTypeCodeID
   , ClassifierCodeID
   , [Name]
   , [Description]
 )
 VALUES (
-    @ClassifierTypeCodeID
+    @ClassifierID
+  , @ClassifierTypeCodeID
   , @ClassifierCodeID
   , COALESCE(@Name, @ClassifierCode, '')
   , COALESCE(@Description, '')

@@ -1,5 +1,6 @@
 ﻿CREATE TABLE internal.ClassifierRelationship (
-    ClassifierTypeCodeID INT NOT NULL
+    ClassifierRelationshipID INT NOT NULL
+  , ClassifierTypeCodeID INT NOT NULL
   , ClassifierCodeID INT NOT NULL
   , ClassifierRelationshipTypeCodeID INT NOT NULL
   , RelatedClassifierTypeCodeID INT NOT NULL

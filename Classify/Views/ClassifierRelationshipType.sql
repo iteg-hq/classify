@@ -1,7 +1,8 @@
 ﻿CREATE VIEW dbo.ClassifierRelationshipType
 AS
 SELECT
-    c.CodeValue AS ClassifierRelationshipTypeCode
+    ot.ClassifierID AS ClassifierRelationshipTypeID
+  , c.CodeValue AS ClassifierRelationshipTypeCode
   , ot.[Name] AS ClassifierRelationshipTypeName
   , ot.[Description] AS ClassifierRelationshipTypeDescription
   , ot.UpdatedBy

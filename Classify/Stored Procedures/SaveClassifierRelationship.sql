@@ -32,8 +32,6 @@ IF NOT EXISTS (
   )
   EXEC dbo.SaveClassifierRelationshipType @ClassifierRelationshipTypeCode
 
-
-
 DECLARE @ClassifierTypeCodeID INT;
 DECLARE @ClassifierCodeID INT;
 DECLARE @ClassifierRelationshipTypeCodeID INT;
@@ -46,8 +44,25 @@ EXEC internal.GetCodeID @ClassifierRelationshipTypeCode, @ClassifierRelationship
 EXEC internal.GetCodeID @RelatedClassifierTypeCode, @RelatedClassifierTypeCodeID OUTPUT;
 EXEC internal.GetCodeID @RelatedClassifierCode, @RelatedClassifierCodeID OUTPUT;
 
+DECLARE @ClassifierRelationshipID INT;
+
+-- TODO: Pick up attributes for change detection?
+SELECT TOP 1 @ClassifierRelationshipID = ClassifierRelationshipID
+FROM internal.ClassifierRelationship
+WHERE ClassifierTypeCodeID = @ClassifierTypeCodeID
+  AND ClassifierCodeID = @ClassifierCodeID
+  AND ClassifierRelationshipTypeCodeID = @ClassifierRelationshipTypeCodeID
+  AND RelatedClassifierTypeCodeID = @RelatedClassifierTypeCodeID
+;
+
+IF @ClassifierRelationshipID IS NULL
+BEGIN
+  SET @ClassifierRelationshipID = NEXT VALUE FOR internal.Identifier
+END
+
 INSERT INTO internal.ClassifierRelationship (
-    ClassifierTypeCodeID
+    ClassifierRelationshipID
+  , ClassifierTypeCodeID
   , ClassifierCodeID
   , ClassifierRelationshipTypeCodeID
   , RelatedClassifierTypeCodeID
@@ -56,7 +71,8 @@ INSERT INTO internal.ClassifierRelationship (
   , [Weight]
   )
 VALUES (
-    @ClassifierTypeCodeID
+    @ClassifierRelationshipID
+  , @ClassifierTypeCodeID
   , @ClassifierCodeID
   , @ClassifierRelationshipTypeCodeID
   , @RelatedClassifierTypeCodeID

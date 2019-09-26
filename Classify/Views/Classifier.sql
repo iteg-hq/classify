@@ -1,7 +1,8 @@
 ﻿CREATE VIEW dbo.Classifier
 AS
 SELECT
-    ct.CodeValue AS ClassifierTypeCode
+    ot.ClassifierID
+  , ct.CodeValue AS ClassifierTypeCode
   , c.CodeValue AS ClassifierCode
   , ot.[Name] AS ClassifierName
   , ot.[Description] AS ClassifierDescription
