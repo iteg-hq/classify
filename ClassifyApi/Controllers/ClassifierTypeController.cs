@@ -1,25 +1,32 @@
-﻿using System;
+﻿using Classify;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Data.SqlClient;
+using System.Globalization;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using Classify;
 
 namespace ClassifyApi.Controllers
 {
+
+
     public class ClassifierTypeController : ApiController
     {
-        readonly DAL dal = new DAL(ConfigurationManager.ConnectionStrings["Classify"].ConnectionString);
-
+        private readonly DAL dal = new DAL(ConfigurationManager.ConnectionStrings["Classify"].ConnectionString);
 
         // GET api/types
         [Route("api/types")]
-        public ClassifierTypeCollectionDto GetClassifierTypeCollection()
+        public IEnumerable<ClassifierTypeDto> GetClassifierTypes([FromUri] ClassifierTypeQuery query)
         {
-            return new ClassifierTypeCollectionDto(dal.GetClassifierTypes());
+            if (query != null)
+            {
+                return dal.GetClassifierTypes().Where(query.Filter).Select(t => new ClassifierTypeDto(t));
+            }
+            else
+            {
+                return dal.GetClassifierTypes().Select(t => new ClassifierTypeDto(t)).OrderBy(c => c.Code);
+            }
         }
 
         // POST api/types
@@ -31,36 +38,27 @@ namespace ClassifyApi.Controllers
                 return BadRequest($"A classifier type with code {type.Code} already exists.");
             }
             var classifierType = dal.SaveClassifierType(classifierTypeDto);
-            return Created($"api/type/{classifierType.Code}", new ClassifierTypeDto(classifierType));
-        }
-
-
-        // GET api/type/{classifierTypeCode}
-        [Route("api/type/{classifierTypeCode}")]
-        public ClassifierTypeDto GetClassifierType(string classifierTypeCode)
-        {
-            return new ClassifierTypeDto(dal[classifierTypeCode]);
+            return Created(classifierTypeDto.URI, new ClassifierTypeDto(classifierType));
         }
 
         // PUT api/type/{classifierTypeCode}
-        [Route("api/type/{classifierTypeCode}")]
-        public IHttpActionResult PutClassifierType([FromBody] ClassifierTypeDto classifierType)
+        [Route("api/types")]
+        public ClassifierTypeDto PutClassifierType([FromBody] ClassifierTypeDto classifierType)
         {
             if (dal.TryGetClassifierType(classifierType.Code, out ClassifierType type))
             {
-                dal.SaveClassifierType(classifierType);
-                return Ok();
+                return new ClassifierTypeDto(dal.SaveClassifierType(classifierType));
             }
-            return Created($"api/type/{classifierType.Code}", classifierType);
+            return null;
         }
 
-        // DELETE api/type/{classifierTypeCode}
-        [Route("api/type/{classifierTypeCode}")]
-        public IHttpActionResult DeleteClassifierType(string classifierTypeCode)
+        // DELETE api/types
+        [Route("api/types")]
+        public IHttpActionResult DeleteClassifierType([FromUri] ClassifierTypeQuery query)
         {
-            if (dal.GetClassifierTypes().Any(t => t.Code == classifierTypeCode))
+            if (dal.GetClassifierTypes().Any(t => t.Code == query.ClassifierTypeCode))
             {
-                dal.DeleteClassifierType(classifierTypeCode);
+                dal.DeleteClassifierType(query.ClassifierTypeCode);
                 return Ok();
             }
             else
@@ -71,59 +69,65 @@ namespace ClassifyApi.Controllers
 
 
         // GET api/type/{classifierTypeCode}/members
-        [Route("api/type/{classifierTypeCode}/members")]
-        public ClassifierCollectionDto GetClassifierTypeMembers(string classifierTypeCode)
+        [Route("api/classifiers")]
+        public IEnumerable<ClassifierDto> GetClassifiers([FromUri] ClassifierTypeQuery query)
         {
-            return new ClassifierCollectionDto(dal[classifierTypeCode]);
+            return dal[query.ClassifierTypeCode].GetMembers().Select(c => new ClassifierDto(c)).OrderBy(c => c.Code);
         }
 
 
-        // POST api/type/{classifierTypeCode}/members
-        [Route("api/type/{classifierTypeCode}/members")]
-        public IHttpActionResult PostClassifier(string classifierTypeCode, [FromBody] ClassifierDto classifierDto)
+        // POST api/classifiers
+        [Route("api/classifiers")]
+        public ClassifierDto PostClassifier([FromBody] ClassifierDto classifierDto)
         {
-            return Ok(dal[classifierTypeCode].AddMember(classifierDto));
+            return new ClassifierDto(dal[classifierDto.TypeCode].AddMember(classifierDto));
         }
 
-        // GET api/type/{classifierTypeCode}/member/{classifierCode}
-        [Route("api/type/{classifierTypeCode}/member/{classifierCode}")]
-        public ClassifierDto GetClassifier(string classifierTypeCode, string classifierCode)
+        [Route("api/classifiers")]
+        public ClassifierDto PutClassifier([FromBody] ClassifierDto classifierDto)
         {
-            return new ClassifierDto(dal[classifierTypeCode][classifierCode]);
+            return new ClassifierDto(dal.SaveClassifier(classifierDto));
         }
 
         // DELETE api/type/{classifierTypeCode}/member/{classifierCode}
-        [Route("api/type/{classifierTypeCode}/member/{classifierCode}")]
-        public bool DeleteClassifier(string classifierTypeCode, string classifierCode)
+        [Route("api/classifiers")]
+        public bool DeleteClassifier([FromUri] ClassifierQuery query)
         {
-            return dal[classifierTypeCode].DeleteMember(classifierCode);
+            return dal[query.ClassifierTypeCode].DeleteMember(query.ClassifierCode);
         }
 
-        // GET api/type/{classifierTypeCode}/member/{classifierCode}/related
-        [Route("api/type/{classifierTypeCode}/member/{classifierCode}/related")]
-        public RelatedClassifiersDto GetClassifierRelationshipTypes(string classifierTypeCode, string classifierCode)
+
+        [Route("api/relationships")]
+        public IEnumerable<ClassifierRelationshipDto> GetClassifierRelationships([FromUri] ClassifierQuery query)
         {
-            Dictionary<string, RelatedClassifierSetDto> typeMap = new Dictionary<string, RelatedClassifierSetDto>();
-            foreach (var r in dal[classifierTypeCode][classifierCode].GetRelated())
-            {
-                if (!typeMap.Keys.Contains(r.RelationshipTypeCode))
-                {
-                    typeMap[r.RelationshipTypeCode] = new RelatedClassifierSetDto { RelationshipTypeCode = r.RelationshipTypeCode };
-                }
-                typeMap[r.RelationshipTypeCode].RelatedClassifiers.Add(new RelatedClassifierDto
-                {
-                    TypeCode = r.RelatedClassifier.TypeCode,
-                    Code = r.RelatedClassifier.Code,
-                    Description = r.Description,
-                    Weight = r.Weight
-                });
-            }
-            return new RelatedClassifiersDto()
-            {
-                ClassifierTypeCode = classifierTypeCode,
-                ClassifierCode = classifierCode,
-                RelatedClassifierSets = typeMap.Values.ToList()
-            };
+            return dal[query.ClassifierTypeCode][query.ClassifierCode].GetRelated().Select(r => new ClassifierRelationshipDto(r));
         }
+
+        [Route("api/relationships")]
+        public ClassifierRelationshipDto PostClassifierRelationship([FromBody] ClassifierRelationshipDto relationship)
+        {
+            dal[relationship.Classifier.TypeCode][relationship.Classifier.Code].AddRelated(relationship.RelationshipTypeCode, relationship.RelatedClassifier);
+            return relationship;
+        }
+
+        [Route("api/relationships")]
+        public IHttpActionResult DeleteClassifierRelationship([FromUri] ClassifierRelationshipQuery q)
+        {
+            dal.DeleteClassifierRelationship(
+                q.ClassifierTypeCode,
+                q.ClassifierCode,
+                q.RelationshipTypeCode,
+                q.RelatedClassifierTypeCode,
+                q.RelatedClassifierCode
+                );
+            return Ok();
+        }
+
+        [Route("api/relationshiptypes")]
+        public IEnumerable<string> GetClassifierRelationshipTypes()
+        {
+            return dal.GetClassifierRelationshipTypes();
+        }
+
     }
 }

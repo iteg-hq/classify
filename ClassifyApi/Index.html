@@ -1,64 +1,330 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8" />
-  <title>Classify</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <link rel="stylesheet" href="static/style.css">
 
-  <script src="static/classify.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <script src="static/mustache.js"></script>
   <script src="static/script.js"></script>
+  <script src="static/classify.js"></script>
+
+  <script id="template" type="x-tmpl-mustache">
+    {{ #classifier }}
+    {{ #dto }}
+    <div id="{{ code }}" class="classifier">
+      <!-- Member header -->
+      <div class="row" id="{{ code }}-header">
+        <div class="col">
+          <h3>
+            <a id="{{ code }}" />
+            <span>{{ name }}</span>
+            <button type="button" class="btn btn-secondary btn-sm" onclick='app.editClassifier("{{ code }}")'>Edit...</button>
+            <button type="button" class="btn btn-danger btn-sm" onclick='app.deleteClassifier("{{ deleteURI }}")'>Delete</button>
+            <!--<small class="text-muted">{{ type.dto.name }}</small>-->
+          </h3>
+          <p>Code: <span class="code">{{ code }}</span></p>
+          <p>Name: <span class="name">{{ name }}</span></p>
+          <p>Description: <span class="description">{{ description }}</span></p>
+        </div>
+      </div>
+
+      <!-- Member buttons -->
+      <div class="row">
+        <div class="col text-right">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <h4>
+            Related classifiers
+            <button type="button" class="btn btn-secondary btn-sm" onclick='app.addRelationship("{{ code }}")'>Add...</button>
+          </h4>
+          {{ ^relationships }}
+          <i>None</i>
+          {{ /relationships }}
+
+
+          <!-- Related classifiers -->
+          <ul>
+            {{ #relationships }}
+            <li>
+              {{ relationshipTypeCode }}
+              <ul>
+                {{ #relationships }}
+                <li data-classify-uri="{{ uri }}">
+                  <a href="#" onclick='app.selectType("{{ relatedClassifier.typeCode }}").then(n => document.getElementById("{{ relatedClassifier.code }}").scrollIntoViewIfNeeded())'>
+                    {{ relatedClassifier.name }} <small class="text-muted">{{ relatedClassifier.typeCode }}</small>
+                  </a>
+                  <button type="button"
+                          class="btn btn-danger btn-sm"
+                          onclick='app.deleteRelationship("{{ classifier.code }}", "{{ relationshipTypeCode }}", "{{ relatedClassifier.typeCode }}", "{{ relatedClassifier.code }}")'>
+                    Delete
+                  </button>
+                  {{ #showWeight }}
+                  {{ weight }} %
+                  {{ /showWeight }}
+                </li>
+                {{ /relationships }}
+              </ul>
+            </li>
+            {{ /relationships }}
+          </ul>
+        </div>
+      </div>
+
+
+      <hr />
+    </div>
+    {{ /dto }}
+    {{ /classifier }}
+  </script>
 </head>
 <body>
-  <div class="container">
-    <div class="row">
-      <div class="col-sm">
-        <div id="types"></div>
-        <hr />
-        <div>
-          <form id="addType">
-            <div class="col-auto">
-              <div class="input-group mb-2">
-                <div class="input-group-prepend">
-                  <div class="input-group-text"><img src="static/add.png" /></div>
-                </div>
-                <input type="text" class="form-control" id="typeCode" placeholder="type code">
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-      <div class="col-sm">
-        <div id="classifiers"></div>
-        <hr />
-        <div>
-          <form id="addClassifier">
-            <div class="col-auto">
-              <div class="input-group mb-2">
-                <div class="input-group-prepend">
-                  <div class="input-group-text"><img src="static/add.png" /></div>
-                </div>
-                <input type="text" class="form-control" id="classifierCode" placeholder="classifier code">
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-      <div class="col-sm">
-        <div id="related"></div>
-        <form id="addRelated">
-          <div class="form-group">
-            <label for="exampleFormControlSelect1">Example select</label>
-            <select class="form-control" id="exampleFormControlSelect1">
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-            </select>
-          </div>
-        </form>
 
+  <div class="container">
+    <!--
+    <div class="row">
+      <form action="#"><input type="text" onchange="filterCards()" id="filterValue"></form>
+    </div>
+    <div class="row">
+      <div class="col">
+        <p class="display-1">Classify</p>
+      </div>
+    </div>
+      -->
+    <div class="row">
+      <div class="col-4" id="navigation">
+        <ul class="list-group" id="types">
+          <li class="list-group-item font-weight-bold">
+            <span>Classifier types</span> <button type="button" class="btn btn-sm " onclick='$("#addTypeModal").modal("show")'>Add...</button>
+          </li>
+        </ul>
+      </div>
+      <div class="col-8">
+
+        <!-- Type header -->
+        <div class="row">
+          <div class="col">
+            <h1>
+              <span class="currentTypeName"></span>
+              <button type="button" class="btn btn-secondary btn-sm" onclick='$("#editTypeModal").modal("show")'>Edit...</button>
+              <button type="button" class="btn btn-danger btn-sm" onclick='app.deleteSelectedType()'>Delete</button>
+            </h1>
+            <p><b>Code:</b> <span class="currentTypeCode"></span></p>
+            <p><b>Description:</b> <span class="currentTypeDescription"></span></p>
+          </div>
+        </div>
+
+        <!-- Type buttons -->
+        <div class="row">
+          <div class="col text-right">
+            <hr />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <h2>
+              Classifiers
+              <button type="button" class="btn btn-secondary btn-sm" onclick='$("#addClassifierModal").modal("show")'>Add...</button>
+            </h2>
+            <ul id="classifierLinks"></ul>
+            <hr />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col" id="classifiers"></div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+    <!-- Modal "edit type" dialog -->
+    <div class="modal fade" id="editTypeModal" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title typeName">Edit classifier type</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group row">
+                <label for="typeCodeInput" class="col-sm-2 col-form-label">Code</label>
+                <div class="col-sm-10">
+                  <input type="text" readonly id="currentTypeCodeInput" class="form-control-plaintext" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="typeNameInput" class="col-sm-2 col-form-label">Name</label>
+                <div class="col-sm-10">
+                  <input type="text" id="currentTypeNameInput" class="form-control" placeholder="Type name" onchange="app.setTypeName(this.value)">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="typeDescriptionInput">Description</label>
+                <textarea type="text" id="currentTypeDescriptionInput" class="form-control" placeholder="Describe the classifier here" onchange="app.setTypeDescription(this.value)"></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- Modal "add type" dialog -->
+    <div class="modal fade" id="addTypeModal" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">New type</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <input type="text" class="form-control" placeholder="Type Code" oninput="app.newTypeCode = this.value">
+              </div>
+              <div class="form-group">
+                <input type="text" class="form-control" placeholder="Type name" oninput="app.newTypeName = this.value">
+              </div>
+              <div class="form-group">
+                <input type="text" class="form-control" placeholder="Describe the classifier here" oninput="app.newTypeDescription = this.value">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="app.createType()">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal "add classifier" dialog -->
+    <div class="modal fade" id="addClassifierModal" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">New classifier</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <input type="text" class="form-control" placeholder="Classifier code" oninput="app.newClassifierCode = this.value">
+              </div>
+              <div class="form-group">
+                <input type="text" class="form-control" placeholder="Classifier name" oninput="app.newClassifierName = this.value">
+              </div>
+              <div class="form-group">
+                <input type="text" class="form-control" placeholder="Description" oninput="app.newClassifierDescription = this.value">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="app.createClassifier()">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal "edit type" dialog -->
+    <div class="modal fade" id="editClassifierModal" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="editClassifierModal-title">Edit classifier</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group row">
+                <label for="editClassifierModal-code" class="col-sm-2 col-form-label">Code</label>
+                <div class="col-sm-10">
+                  <input type="text" readonly id="editClassifierModal-code" class="form-control-plaintext" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="editClassifierModal-name" class="col-sm-2 col-form-label">Name</label>
+                <div class="col-sm-10">
+                  <input type="text" id="editClassifierModal-name" class="form-control" placeholder="Type name" onchange="app.setCurrentClassifierName(this.value)">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="editClassifierModal-description">Description</label>
+                <textarea type="text" id="editClassifierModal-description" class="form-control" placeholder="Description" onchange="app.setCurrentClassifierDescription(this.value)"></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+    <!-- Modal "add relationship" dialog -->
+    <div class="modal fade" id="addRelationshipModal" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">New relationship <span class="currentTypeCode"></span> <span class="currentTypeName"></span></h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="selectRelationshipType">Select relationship type</label>
+                <select class="form-control" id="selectRelationshipType"></select>
+              </div>
+
+              <div class="form-group">
+                <label for="selectType">Select type</label>
+                <select class="form-control" id="selectType"></select>
+              </div>
+
+              <div class="form-group">
+                <label for="selectClassifier">Select classifier</label>
+                <select class="form-control" id="selectClassifier"></select>
+              </div>
+            </form>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="saveClassifierRelationshipButton">Save</button>
+          </div>
+
+        </div>
       </div>
     </div>
   </div>

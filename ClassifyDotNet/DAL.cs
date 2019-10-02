@@ -17,6 +17,12 @@ namespace Classify
             this.connectionString = connectionString;
         }
 
+        /// <summary>
+        ///  Get zero or one classifier type by Code
+        /// </summary>
+        /// <param name="classifierTypeCode">The type code of the classifier to return</param>
+        /// <param name="result">The classifier type the the code `classifierTypeCode`</param>
+        /// <returns></returns>
         public bool TryGetClassifierType(string classifierTypeCode, out ClassifierType result)
         {
             using (var connection = new SqlConnection(connectionString))
@@ -34,7 +40,9 @@ namespace Classify
                             result = new ClassifierType(this, reader.GetString(0))
                             {
                                 Name = reader.GetString(1),
-                                Description = reader.GetString(2)
+                                Description = reader.GetString(2),
+                                UpdatedBy = reader.GetString(3),
+                                UpdatedOn = reader.GetDateTime(4)
                             };
                             return true;
                         }
@@ -48,9 +56,14 @@ namespace Classify
             }
         }
 
+        /// <summary>
+        /// Get a classifier type with the code `ClassifierTypeCode`. If the type does not exist, an error is thrown.
+        /// </summary>
+        /// <param name="classifierTypeCode">The code of the classifier type to return.</param>
+        /// <returns></returns>
         public ClassifierType GetClassifierType(string classifierTypeCode)
         {
-            if(TryGetClassifierType(classifierTypeCode, out ClassifierType type))
+            if (TryGetClassifierType(classifierTypeCode, out ClassifierType type))
             {
                 return type;
             }
@@ -76,7 +89,9 @@ namespace Classify
                                 yield return new ClassifierType(this, reader.GetString(0))
                                 {
                                     Name = reader.GetString(1),
-                                    Description = reader.GetString(2)
+                                    Description = reader.GetString(2),
+                                    UpdatedBy = reader.GetString(3),
+                                    UpdatedOn = reader.GetDateTime(4)
                                 };
                             }
                         }
@@ -94,7 +109,7 @@ namespace Classify
                 using (var command = new SqlCommand("dbo.DeleteClassifierType", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.AddWithValue("@TypeCode", code);
+                    command.Parameters.AddWithValue("@ClassifierTypeCode", code);
                     command.ExecuteNonQuery();
                 }
                 return true;
@@ -112,7 +127,7 @@ namespace Classify
                 using (var command = new SqlCommand("dbo.SaveClassifierType", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.AddWithValue("@TypeCode", code);
+                    command.Parameters.AddWithValue("@ClassifierTypeCode", code);
                     command.Parameters.AddWithValue("@Name", name);
                     command.Parameters.AddWithValue("@Description", description);
                     command.ExecuteNonQuery();
@@ -122,6 +137,7 @@ namespace Classify
             return GetClassifierType(code);
         }
 
+        // Classifiers
         public IEnumerable<Classifier> GetClassifiers(string typeCode)
         {
             using (var connection = new SqlConnection(connectionString))
@@ -140,7 +156,9 @@ namespace Classify
                                 yield return new Classifier(this, reader.GetString(0), reader.GetString(1))
                                 {
                                     Name = reader.GetString(2),
-                                    Description = reader.GetString(3)
+                                    Description = reader.GetString(3),
+                                    UpdatedBy = reader.GetString(4),
+                                    UpdatedOn = reader.GetDateTime(5)
                                 };
                             }
                         }
@@ -149,9 +167,44 @@ namespace Classify
             }
         }
 
+        public bool TryGetClassifier(string classifierTypeCode, string classifierCode, out Classifier result)
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (var command = new SqlCommand("dbo.GetClassifier", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@ClassifierTypeCode", classifierTypeCode);
+                    command.Parameters.AddWithValue("@ClassifierCode", classifierCode);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                        {
+                            reader.Read();
+                            result = new Classifier(this, reader.GetString(0), reader.GetString(1))
+                            {
+                                Name = reader.GetString(2),
+                                Description = reader.GetString(3),
+                                UpdatedBy = reader.GetString(4),
+                                UpdatedOn = reader.GetDateTime(5)
+                            };
+                            return true;
+                        }
+                        else
+                        {
+                            result = null;
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+
+
         public Classifier GetClassifier(string typeCode, string code)
             => GetClassifiers(typeCode).Single(c => c.Code == code);
-
 
         public Classifier SaveClassifier(IClassifier classifier)
         {
@@ -166,23 +219,14 @@ namespace Classify
                 using (var command = new SqlCommand("dbo.SaveClassifier", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.AddWithValue("@TypeCode", typeCode);
-                    command.Parameters.AddWithValue("@Code", code);
+                    command.Parameters.AddWithValue("@ClassifierTypeCode", typeCode);
+                    command.Parameters.AddWithValue("@ClassifierCode", code);
                     command.Parameters.AddWithValue("@Name", name);
                     command.Parameters.AddWithValue("@Description", description);
                     command.ExecuteNonQuery();
                 }
             }
-            return new Classifier(this, typeCode, code)
-            {
-                Name = name,
-                Description = description
-            };
-        }
-
-        public bool TryDeleteClassifier(Classifier classifier)
-        {
-            return true;
+            return GetClassifier(typeCode, code);
         }
 
         public bool TryDeleteClassifier(string classifierTypeCode, string classifierCode)
@@ -202,7 +246,6 @@ namespace Classify
         }
         public IEnumerable<ClassifierRelationship> GetRelatedClassifiers(IClassifier classifier)
             => GetClassifierRelationships(classifier.TypeCode, classifier.Code);
-
 
         public IEnumerable<ClassifierRelationship> GetClassifierRelationships(string classifierTypeCode, string classifierCode)
         {
@@ -230,7 +273,10 @@ namespace Classify
                                     )
                                 {
                                     Description = reader.GetString(5),
-                                    Weight = reader.GetDouble(6)
+                                    Weight = reader.GetDouble(6),
+                                    IsInbound = reader.GetInt32(7) == 1,
+                                    UpdatedBy = reader.GetString(8),
+                                    UpdatedOn = reader.GetDateTime(9)
                                 };
                             }
                         }
@@ -260,6 +306,50 @@ namespace Classify
             }
         }
 
+        public void DeleteClassifierRelationship(
+            string typeCode,
+            string code,
+            string relationshipCode,
+            string relatedTypeCode,
+            string relatedCode)
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (var command = new SqlCommand("dbo.DeleteClassifierRelationship", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@ClassifierTypeCode", typeCode);
+                    command.Parameters.AddWithValue("@ClassifierCode", code);
+                    command.Parameters.AddWithValue("@ClassifierRelationshipTypeCode", relationshipCode);
+                    command.Parameters.AddWithValue("@RelatedClassifierTypeCode", relatedTypeCode);
+                    command.Parameters.AddWithValue("@RelatedClassifierCode", relatedCode);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public IEnumerable<string> GetClassifierRelationshipTypes()
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (var command = new SqlCommand("dbo.GetClassifierRelationshipTypes", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                        {
+                            while (reader.Read())
+                            {
+                                yield return reader.GetString(0);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         public void Reset()
         {

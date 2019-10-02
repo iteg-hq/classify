@@ -1,221 +1,244 @@
-﻿
+﻿'use strict';
 
-let selectedClassifierType;
-let selectedClassifier;
+
+/*
+function getValue() {
+  var template = $('#getValue').html();
+  var rendered = Mustache.render(template);
+  let div = document.createElement("div");
+  div.innerHTML = rendered;
+
+  div.querySelector("button.btn-primary").onclick = () => alert("!");
+  document.querySelector("#foo").appendChild(div);
+  $("#getValueModal").modal("toggle")
+
+}
+*/
+
+let app = null;
 let typeMap = new Map();
 let classifierMap = new Map();
-let relatedMap = new Map();
+let template = null;
 
-let ready = (callback) => {
+
+function updateType(type) {
+  $(".currentTypeCode").text(type.dto.code);
+  $(".currentTypeName").text(type.dto.name);
+  $(".currentTypeDescription").text(type.dto.description);
+  document.getElementById("currentTypeCodeInput").value = type.dto.code;
+  document.getElementById("currentTypeNameInput").value = type.dto.name;
+  document.getElementById("currentTypeDescriptionInput").value = type.dto.description;
+}
+
+async function startup() {
+  template = $('#template').html();
+  Mustache.parse(template);
+
+  app = new App("api/types");
+
+  // Create DOM elements and attach event handlers to type object
+  app.onAddType = function (type) {
+    const classifierTypeList = document.getElementById("types");
+    let item = makeTypeElement(type);
+
+    // Find first element with greater contents
+    const refElement = [...classifierTypeList.querySelectorAll(".classifier-type")].find(e => e.textContent.localeCompare(item.textContent, "en", { sensitivity: "base" }) == 1);
+    if (!refElement) { classifierTypeList.appendChild(item); }
+    else { classifierTypeList.insertBefore(item, refElement); }
+
+    type.onSelect = function () {
+      item.classList.add("active");
+      // Cleanup
+      let links = document.getElementById("classifierLinks");
+      while (links.hasChildNodes()) links.removeChild(links.firstChild);
+      let classifiers = document.getElementById("classifiers");
+      while (classifiers.hasChildNodes()) classifiers.removeChild(classifiers.firstChild);
+      type.onChange()
+    };
+
+    type.onDeselect = function () { item.classList.remove("active"); };
+    type.onRemove = function () { classifierTypeList.removeChild(item); };
+    type.onChange = function () {
+      item.textContent = this.dto.name || this.dto.code;
+      updateType(this)
+    }
+  }
+
+  app.onAddClassifier = function (classifier) {
+    console.log("onAddClassifier");
+    let row = document.createElement("div");
+    row.innerHTML = Mustache.render(template, { classifier: classifier, type: app.selectedType });
+    document.getElementById("classifiers").appendChild(row);
+
+    let link = document.createElement("li");
+    link.innerHTML = `<a href="#${classifier.dto.code}"> ${classifier.dto.name || classifier.dto.code}</a>`;
+    document.getElementById("classifierLinks").appendChild(link);
+
+    classifier.onDelete = function () {
+      row.parentElement.removeChild(row);
+      link.parentElement.removeChild(link);
+    };
+
+    classifier.onChange = function () {
+      $(".name", row).text(this.dto.name);
+      $(".description", row).text(this.dto.description);
+    }
+
+    classifier.onEdit = function () {
+      document.getElementById("editClassifierModal-code").value = this.dto.code;
+      document.getElementById("editClassifierModal-name").value = this.dto.name;
+      document.getElementById("editClassifierModal-description").value = this.dto.description;
+      $("#editClassifierModal").modal("show");
+    }
+
+    classifier.getRelationship = function (
+      getRelationshipTypeCodes,
+      setRelationshipTypeCode,
+      getTypeCodes,
+      setTypeCode,
+      setClassifierCode,
+      saveRelationship
+    ) {
+
+      let selectRelationshipType = document.getElementById("selectRelationshipType");
+      $(selectRelationshipType).empty();
+
+      let opt1 = document.createElement("option");
+      opt1.value = "";
+      opt1.text = "Select a relationship type...";
+      selectRelationshipType.add(opt1)
+
+      selectRelationshipType.addEventListener("change", function () { setRelationshipTypeCode(this.value); });
+      getRelationshipTypeCodes()
+        .then(rtypes => rtypes.forEach(t => {
+          let opt = document.createElement("option");
+          opt.value = t;
+          opt.text = t;
+          selectRelationshipType.add(opt);
+        }))
+
+      let selectType = document.getElementById("selectType");
+      $(selectType).empty();
+
+      let opt2 = document.createElement("option");
+      opt2.value = "";
+      opt2.text = "Select a classifier type...";
+      selectType.add(opt2)
+
+      getTypeCodes()
+        .then(types => types.forEach(t => {
+          let opt = document.createElement("option");
+          opt.value = t.dto.code;
+          opt.text = `${t.dto.name} (${t.dto.code})`;
+          selectType.add(opt);
+        }))
+
+      let selectClassifier = document.getElementById("selectClassifier");
+      selectClassifier.addEventListener("change", function () { setClassifierCode(this.value); });
+      selectType.addEventListener("change", function () {
+        $(selectClassifier).empty();
+        let opt3 = document.createElement("option");
+        opt3.value = "";
+        opt3.text = "Select a classifier...";
+        selectClassifier.add(opt3)
+
+        setTypeCode(this.value)
+          .then(classifiers => classifiers.forEach(c => {
+            let opt = document.createElement("option");
+            opt.value = c.dto.code;
+            opt.text = `${c.dto.name} (${c.dto.code})`;
+            selectClassifier.add(opt);
+          }))
+      });
+
+      $("#saveClassifierRelationshipButton").click(saveRelationship);
+
+      $("#addRelationshipModal").modal("show");
+    }
+  }
+
+  app.loadTypes();
+
+  window.onpopstate = event => { if (event.state) navigate(event.state.typeCode) };
+
+  //await loadTypes();
+
+  const urlParams = new URLSearchParams(window.location.search);
+  //navigate(urlParams.get("TypeCode"));
+}
+
+
+
+
+
+
+
+
+
+
+async function launchAddRelationshipModal(typeCode, classifierCode) {
+  let response = await fetch("/api/relationshiptypes");
+  let relationshipTypes = await response.json();
+  relationshipTypes.forEach(t => {
+    let opt = document.createElement("option")
+    opt.value = t;
+    opt.text = t;
+    document.getElementById("selectRelationshipType").add(opt);
+  });
+
+  response = await fetch("/api/types");
+  let types = await response.json();
+  types.forEach(t => {
+    let opt = document.createElement("option")
+    opt.value = t.code;
+    opt.text = t.name;
+    document.getElementById("selectType").add(opt);
+  });
+
+  $("#addRelationshipModal").modal("show");
+
+  $("#saveClassifierRelationshipButton").click(() => {
+    addRelationship({
+      classifier: {
+        typeCode: typeCode,
+        code: classifierCode
+      },
+      relationshipTypeCode: document.getElementById("selectRelationshipType").value,
+      relatedClassifier: {
+        typeCode: document.getElementById("selectType").value,
+        code: document.getElementById("selectClassifier").value
+      }
+    })
+  })
+}
+
+async function navigate(typeCode) {
+  if (!typeCode) return;
+  const element = getTypeElement(typeCode);
+  if (!element) {
+    document.getElementById("main").innerHTML = `<br/><div class="alert alert-warning" role="alert">Classifier type ${typeCode} not found</div>`;
+    return;
+  }
+  showType(element);
+}
+
+
+// Wrap a classifier type DTO in a DOM element
+function makeTypeElement(type) {
+  let item = document.createElement("li");
+  item.classList.add("list-group-item", "classifier-type", "font-weight-light");
+  item.addEventListener("click", function () { app.selectType(type.dto.code); });
+  item.textContent = type.dto.name || type.dto.code;
+  return item;
+}
+
+
+
+
+((callback) => {
   if (document.readyState != "loading") callback();
   else document.addEventListener("DOMContentLoaded", callback);
-}
-
-
-function startup() {
-  // Event handlers
-  document.getElementById("addType").addEventListener("submit", function (event) {
-    event.preventDefault()
-    addType()
-  });
-
-  document.getElementById("addClassifier").addEventListener("submit", function (event) {
-    event.preventDefault()
-    addClassifier()
-  });
-
-  // event handler for "hashchange"
-  let frag = window.location.hash;
-  let period = frag.search(frag);
-  loadTypes();
-};
-
-
-function loadTypes() {
-  // Build the type list
-  typeMap.clear();
-  fetch("api/types")
-    .then(response => response.json())
-    .then(typeCollection => {
-      // Find the list element, then put cards in it
-      var classifierList = document.getElementById("types");
-      typeCollection.members.forEach(classifierType => {
-        typeMap.set(classifierType.code, classifierType);
-        card = makeTypeCard(classifierType);
-        classifierList.append(card);
-      })
-    })
-}
-
-
-function makeCard(dto, cardClass, clickHandler) {
-  let card = document.createElement('div');
-  card.classList.add("card", cardClass);
-
-  let cardBody = document.createElement('div');
-  cardBody.classList.add("card-body");
-  card.append(cardBody);
-
-  let remove = document.createElement('img');
-  remove.classList.add("small-button");
-  remove.src = "static/delete.png"
-  remove.addEventListener("click", event => deleteItem(event, dto, card));
-  cardBody.append(remove);
-
-  let cardLabel = document.createElement('span');
-  cardLabel.classList.add("card-text");
-  cardLabel.innerText = dto.code;
-  cardLabel.addEventListener("click", event => clickHandler(event, dto, card));
-  cardBody.append(cardLabel);
-
-  dto.card = card;
-  return card;
-}
-
-makeTypeCard = (classifierType) => makeCard(classifierType, 'classifier-type', selectType);
-makeClassifierCard = (classifier) => makeCard(classifier, 'classifier', selectClassifier);
-
-function addType() {
-  var typeCode = document.getElementById("typeCode").value;
-  if (!typeCode) return;
-  const options = {
-    method: "POST",
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ code: typeCode })
-  }
-  fetch("api/types", options)
-    .then(async function (response) {
-      if (response.ok) {
-        let classifierType = await response.json();
-        var classifierTypeList = document.getElementById("types");
-        classifierTypeList.append(makeTypeCard(classifierType));
-      } else {
-        let error = await response.json();
-        console.log(error.Message);
-      }
-    })
-}
-
-function addClassifier() {
-  const classifierCode = document.getElementById("classifierCode").value;
-  if (!classifierCode) return;
-  const dto = {
-    typeCode: selectedClassifierType.code,
-    code: classifierCode
-  }
-  document.querySelectorAll(".active")
-  const options = {
-    method: "POST",
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(dto)
-  }
-  fetch(selectedClassifierType.addMemberURI, options)
-    .then(async function (response) {
-      if (response.ok) {
-        const classifier = await response.json();
-        const classifierList = document.getElementById("classifiers");
-        classifierList.append(makeClassifierCard(classifier));
-      } else {
-        const error = await response.json();
-        console.log(error.Message);
-      }
-    })
-}
-
-
-function deleteItem(event, dto, element) {
-  element.parentNode.removeChild(element);
-  options = {
-    method: "DELETE",
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  };
-  fetch(dto.deleteURI, options)
-    .then(response => {
-      if (!response.ok)
-      {
-        console.log("Delete failed");
-      }
-    });
-  event.stopPropagation();
-}
-
-
-function selectType(event, classifierType, card) {
-  if (selectedClassifierType) {
-    selectedClassifierType.card.classList.remove("active");
-  }
-  selectedClassifierType = classifierType;
-  // Enable classifier creation
-  document.getElementById("classifierCode").disabled = false;
-  activeClassifierType = classifierType;
-  card.classList.add("active");
-  fetch(classifierType.getMembersURI)
-    .then(response => response.json())
-    .then(classifierCollection => {
-      var classifierList = document.getElementById("classifiers");
-      while (classifierList.childElementCount) { classifierList.removeChild(classifierList.firstChild); }
-      classifierCollection.members.forEach(classifier => {
-        classifierList.append(makeClassifierCard(classifier))
-      })
-    })
-}
-
-function selectClassifier(event, classifier, card) {
-  console.dir(selectedClassifier);
-  if (selectedClassifier) {
-    selectedClassifier.card.classList.remove("active");
-  }
-  selectedClassifier = classifier;
-  card.classList.add("active");
-  fetch(classifier.getRelatedURI)
-    .then(response => response.json())
-    .then(relatedCollection => {
-      var relatedList = document.getElementById("related");
-      while (relatedList.childElementCount) { relatedList.removeChild(relatedList.firstChild); }
-      relatedCollection.relatedClassifierSets.forEach(related => {
-        //console.dir(related)
-
-        let card = document.createElement('div');
-        card.classList.add("card", 'related');
-
-        let cardHeader = document.createElement('div');
-        cardHeader.classList.add("card-header");
-
-        let remove = document.createElement('img');
-        remove.classList.add("small-button");
-        remove.src = "static/delete.png"
-        remove.addEventListener("click", event => deleteItem(event, related, card));
-
-        let title = document.createElement('span');
-        title.innerText = related.relationshipTypeCode;
-
-        let list = document.createElement('ul');
-        list.classList.add("list-group", "list-group-flush");
-
-        related.relatedClassifiers.forEach(c => {
-          let listItem = document.createElement('li');
-          listItem.classList.add("list-group-item");
-          listItem.innerHTML = `${c.code} <small>[${c.typeCode}]</small>`;
-          list.append(listItem);
-        })
-
-        card.append(cardHeader);
-        cardHeader.append(remove);
-        cardHeader.append(title);
-        card.append(list);
-
-        relatedList.append(card)
-      })
-    })
-}
+})(startup);
 
 
 
-
-ready(startup);

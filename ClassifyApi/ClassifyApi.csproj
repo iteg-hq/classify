@@ -83,7 +83,11 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Index.html" />
+    <Content Include="static\add.png" />
+    <Content Include="static\bootstrap.min.js" />
     <Content Include="static\classify.js" />
+    <Content Include="static\delete.png" />
+    <Content Include="static\mustache.js" />
     <Content Include="static\script.js" />
     <Content Include="static\style.css" />
     <Content Include="Web.config" />
@@ -94,16 +98,14 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\DTO\ClassifierCollectionDto.cs" />
-    <Compile Include="Models\DTO\ClassifierTypeCollectionDto.cs" />
-    <Compile Include="Models\DTO\Link.cs" />
     <Compile Include="Models\DTO\ClassifierDto.cs" />
-    <Compile Include="Models\DTO\RelatedClassifiersDto.cs" />
+    <Compile Include="Models\DTO\ClassifierRelationshipDto.cs" />
     <Compile Include="Models\DTO\ClassifierTypeDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace Classify
@@ -21,7 +22,8 @@ namespace Classify
         public string Code { get; private set; }
         public string Name { get; set; }
         public string Description { get; set; }
-
+        public string UpdatedBy { get; set; }
+        public DateTime UpdatedOn { get; set; }
         public Classifier AddMember(IClassifier classifier)
             => AddMember(classifier.Code, classifier.Name, classifier.Description);
 
@@ -35,7 +37,13 @@ namespace Classify
 
         public Classifier GetMember(string classifierCode)
         {
-            return GetMembers().Single(c => c.Code == classifierCode);
+            if (dal.TryGetClassifier(Code, classifierCode, out Classifier result))
+            {
+                return result;
+            } else
+            {
+                throw new Exception(classifierCode);
+            }
         }
 
         public Classifier this[string code] => GetMember(code);

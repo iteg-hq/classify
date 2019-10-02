@@ -1,4 +1,6 @@
-﻿namespace Classify
+﻿using System;
+
+namespace Classify
 {
     public class ClassifierRelationship
     {
@@ -14,7 +16,9 @@
         public string RelationshipTypeCode;
         public string Description;
         public double Weight = 100.0;
-
+        public bool IsInbound;
+        public string UpdatedBy;
+        public DateTime UpdatedOn;
         public override string ToString()
         {
             return $"{Classifier} [{RelationshipTypeCode}] {RelatedClassifier}";

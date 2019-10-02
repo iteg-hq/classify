@@ -1,26 +1,34 @@
 ﻿using Classify;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 
 namespace ClassifyApi
 {
 
     public class ClassifierTypeDto : IClassifierType
     {
+        public string URI => $"/api/types?ClassifierTypeCode={Code}";
+        public string ChangeURI => URI;
+        public string DeleteURI => URI;
+        public string AddMemberURI => $"/api/classifiers";
+        public string GetMembersURI => $"/api/classifiers?ClassifierTypeCode={Code}";
         public string Code { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public string ChangeURI => $"/api/type/{Code}";
-        public string DeleteURI => $"/api/type/{Code}";
-        public string AddMemberURI => $"/api/type/{Code}/members";
-        public string GetMembersURI => $"/api/type/{Code}/members";
+        public string UpdatedBy { get; set; }
+        public DateTime UpdatedOn { get; set; }
 
         public ClassifierTypeDto() { }
-        public ClassifierTypeDto(IClassifierType classifierType)
+        public ClassifierTypeDto(ClassifierType classifierType)
         {
             Code = classifierType.Code;
             Name = classifierType.Name;
             Description = classifierType.Description;
+            UpdatedBy = classifierType.UpdatedBy;
+            UpdatedOn = classifierType.UpdatedOn;
         }
     }
 }
+

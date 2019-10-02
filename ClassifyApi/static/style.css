@@ -1,45 +1,17 @@
 ﻿body {
-  font-family: Arial, Helvetica, sans-serif;
 }
 
-.card {
-  margin: 10px
+li.list-group-item {
+  padding: 5px 15px;
 }
 
-.card-body {
-  padding: 5px;
+/*
+div#navigation {
+  overflow-y: scroll;
+  height: 100vh;
 }
+*/
 
-.card-header {
-  padding: 5px;
-}
-
-.list-group {
-  padding: 5px;
-}
-
-.list-group-item {
-  padding: 0px;
-}
-
-div.classifier-type {
-}
-
-img.small-button {
-  padding: 5px;
-}
-
-img.small-button:hover {
-  cursor: pointer;
-}
-
-
-.small-button {
-  font-size: smaller;
-  margin: 0px 0px 0px 10px;
-  padding: 0px;
-}
-
-.active {
-  font-weight: bold;
+.edit {
+  border: 1px solid #cccccc;
 }
