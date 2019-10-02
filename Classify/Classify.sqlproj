@@ -96,6 +96,7 @@
     <Build Include="Stored Procedures\GetClassifierType.sql" />
     <Build Include="Stored Procedures\CopyClassifier.sql" />
     <Build Include="Stored Procedures\GetClassifier.sql" />
+    <Build Include="Stored Procedures\GetClassifierRelationshipTypes.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Local.publish.xml" />
