@@ -1,8 +1,8 @@
 ﻿body {
 }
 
-li.list-group-item {
-  padding: 5px 15px;
+.active {
+  background-color: yellow;
 }
 
 /*
@@ -11,7 +11,3 @@ div#navigation {
   height: 100vh;
 }
 */
-
-.edit {
-  border: 1px solid #cccccc;
-}

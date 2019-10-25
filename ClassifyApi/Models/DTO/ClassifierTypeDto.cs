@@ -20,14 +20,23 @@ namespace ClassifyApi
         public string UpdatedBy { get; set; }
         public DateTime UpdatedOn { get; set; }
 
+        public List<ClassifierDto> members = new List<ClassifierDto>();
+
         public ClassifierTypeDto() { }
-        public ClassifierTypeDto(ClassifierType classifierType)
+        public ClassifierTypeDto(ClassifierType classifierType, bool addClassifiers = true, bool addRelationships = true)
         {
             Code = classifierType.Code;
             Name = classifierType.Name;
             Description = classifierType.Description;
             UpdatedBy = classifierType.UpdatedBy;
             UpdatedOn = classifierType.UpdatedOn;
+            if (addClassifiers)
+            {
+                foreach(Classifier classifier in classifierType.GetMembers())
+                {
+                    members.Add(new ClassifierDto(classifier, addRelationships));
+                }
+            }
         }
     }
 }

@@ -4,79 +4,85 @@
   return 0;
 }
 
+class Bind {
+  constructor() {
+    this.scope = new Map();
+  }
+
+  get(key) {
+    return this.scope.get(key);
+  }
+
+  set(key, value) {
+    this.scope.set(key, value);
+    console.log("set");
+    document.querySelectorAll(`[data-bind=${key}]`).forEach(element => {
+      if (element.type && (element.type === "text" || element.type === "textarea")) element.value = value;
+      else element.textContent = value;
+    });
+  }
+}
+
+
+
 class App {
   constructor(rootURI) {
     this.rootURI = rootURI;
-    this.types = new Map();
+    this.typeCache = new Map();
+    this.classifierCache = new Map();
     this.selectedType = null;
-
-    this.classifiers = new Map();
     this.selectedClassifier = null;
-
-    this.newTypeCode = null;
-    this.newTypeName = null;
-    this.newTypeDescription = null;
-
-    this.newClassifierCode = null;
-    this.newClassifierName = null;
-    this.newClassifierDescription = null;
-
-    this.newRelationshipRelationshipTypeCode = null;
-    this.newRelationshipRelatedClassifierTypeCode = null;
-    this.newRelationshipRelatedClassifierCode = null;
-
-    this.onAddType = (type) => { };
-    this.onAddClassifier = (classifier) => { };
+    this.values = new Bind();
   }
 
-  getTypes() {
+  getTypes(callback) {
     return fetch(this.rootURI)
       .then(response => response.json())
-      .then(dtos => dtos.map(dto => { return { dto: dto } }));
+      .then(dtos => dtos.map(dto => {
+        this.typeCache.set(dto.code, dto);
+        callback(dto.code, dto.name);
+      }));
   }
 
-  // Load types from API and add them to the navigation list
-  loadTypes() {
-    this.getTypes()
-      .then(types => types.forEach(t => this.addType(t))) // map(method) sets "this" of method equal to undefined
-    //.then(() => this.selectType("Bordereau"))
-  }
+  selectType(typeCode) {
+    // If the type is already selected, return
+    if (this.selectedType && typeCode == this.selectedType.code) return;
+    // If some other type is already selected, deselect it
+    if (this.selectedType) this.onDeselectType(this.selectedType.code);
+    // Select a new type
+    this.selectedType = this.typeCache.get(typeCode);
 
-  // Add a type to the navigation list
-  addType(type) {
-    this.types.set(type.dto.code, type);
-    this.onAddType(type);
-  }
+    this.values.set("typeCode", this.selectedType.code);
+    this.values.set("typeName", this.selectedType.name);
+    this.values.set("typeDescription", this.selectedType.description);
 
-  deleteType(typeCode) {
-    let index = this.types.findIndex(t => t.code > typeCode)
-    this.types.splice(index, 1);
-    this.onDeleteType(this.types[index]);
-  }
-
-
-  selectType(typeCode, forceRefresh = false) {
-    let newType = this.types.get(typeCode);
-    if (!forceRefresh && this.selectedType && newType.dto.code == this.selectedType.dto.code) return;
-    if (this.selectedType) this.selectedType.onDeselect();
-    newType.onSelect();
-    this.selectedType = newType;
-
-    this.classifiers.clear();
-
-    return this.getClassifiers(this.selectedType)
+    this.onSelectType(typeCode, this.selectedType.name, this.selectedType.description);
+    // Clear classifier class
+    this.classifierCache.clear();
+    this.onHideClassifiers();
+    // Get, cache, and show classifiers for the new type
+    return this.getClassifiers(typeCode)
       .then(classifiers => {
-        let n = 0;
         classifiers.forEach(
           classifier => {
-            n += 1;
-            classifier.showWeight = (classifier.dto.weight < 100);
-            this.addClassifier(classifier);
+            classifier.showWeight = (classifier.weight < 100);
+            this.classifierCache.set(classifier.code, classifier);
+            this.onShowClassifier(classifier.code, classifier.name, classifier.description);
           }
         );
-        return n;
       })
   }
+
+
+
+  deleteType(typeCode) {
+    let type = this.typeCache.get(typeCode);
+    option = { "method": "DELETE" };
+    fetch(type.deleteURI, options).then(
+      this.typeCache.delete(typeCode)
+    );
+  }
+
 
   setTypeName(name) {
     this.selectedType.dto.name = name;
@@ -97,7 +103,6 @@ class App {
     this.selectedClassifier.dto.description = description;
     this.saveSelectedClassifier(this.selectedClassifier);
   }
-
 
   saveSelectedType() {
     let type = this.selectedType;
@@ -131,7 +136,7 @@ class App {
             .then(dto => {
               let type = { dto: dto }
               this.addType(type);
-              this.selectType(type.dto.code);
+              this.selectType(code);
               return type;
             })
         } else {
@@ -139,6 +144,7 @@ class App {
         }
       })
   }
+
   /*
   saveType(type, method) {
     const options = {
@@ -190,9 +196,9 @@ class App {
       .then(response => {
         if (response.ok) {
           response.json()
-            .then(dto => {
-              let classifier = { dto: dto };
-              this.addClassifier(classifier);
+            .then(classifier => {
+              this.classifiers.set(classifier.code, classifier);
+              this.onShowClassifier(code, name, description);
               return classifier;
             })
         } else {
@@ -201,13 +207,11 @@ class App {
       })
   }
 
-
-
-
-  getClassifiers(type) {
-    return fetch(type.dto.getMembersURI)
+  getClassifiers(typeCode) {
+    const type = this.typeCache.get(typeCode);
+    return fetch(type.getMembersURI)
       .then(response => response.json())
-      .then(classifiers => classifiers.map(c => { return { dto: c } }))
+    //.then()
   }
 
 
@@ -258,13 +262,6 @@ class App {
       })
   }
 
-
-  addClassifier(classifier) {
-    this.classifiers.set(classifier.dto.code, classifier);
-    this.onAddClassifier(classifier);
-    return classifier;
-  }
-
   createRelationship() {
     const options = {
       method: "POST",
@@ -285,7 +282,6 @@ class App {
     return fetch("api/relationships", options)
       .then(response => response.json())
       .then(dto => this.selectType(this.selectedType.dto.code, true));
-
   }
 
   addRelationship(classifierCode) {
