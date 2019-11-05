@@ -127,7 +127,7 @@ namespace Classify
                 using (var command = new SqlCommand("dbo.SaveClassifierType", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.AddWithValue("@ClassifierTypeCode", code);
+                    command.Parameters.AddWithValue("@Code", code);
                     command.Parameters.AddWithValue("@Name", name);
                     command.Parameters.AddWithValue("@Description", description);
                     command.ExecuteNonQuery();
@@ -204,7 +204,7 @@ namespace Classify
 
 
         public Classifier GetClassifier(string typeCode, string code)
-            => GetClassifiers(typeCode).Single(c => c.Code == code);
+            => GetClassifiers(typeCode).Single(c => c.Code.ToLower() == code.ToLower());
 
         public Classifier SaveClassifier(IClassifier classifier)
         {
@@ -219,8 +219,8 @@ namespace Classify
                 using (var command = new SqlCommand("dbo.SaveClassifier", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.AddWithValue("@ClassifierTypeCode", typeCode);
-                    command.Parameters.AddWithValue("@ClassifierCode", code);
+                    command.Parameters.AddWithValue("@TypeCode", typeCode);
+                    command.Parameters.AddWithValue("@Code", code);
                     command.Parameters.AddWithValue("@Name", name);
                     command.Parameters.AddWithValue("@Description", description);
                     command.ExecuteNonQuery();
@@ -244,8 +244,8 @@ namespace Classify
             }
             return true; // TODO: return real value
         }
-        public IEnumerable<ClassifierRelationship> GetRelatedClassifiers(IClassifier classifier)
-            => GetClassifierRelationships(classifier.TypeCode, classifier.Code);
+        //public IEnumerable<ClassifierRelationship> GetRelatedClassifiers(IClassifier classifier)
+        //    => GetClassifierRelationships(classifier.TypeCode, classifier.Code);
 
         public IEnumerable<ClassifierRelationship> GetClassifierRelationships(string classifierTypeCode, string classifierCode)
         {

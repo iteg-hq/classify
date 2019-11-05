@@ -10,14 +10,14 @@ namespace ClassifyApi
         public string URI => $"/api/classifiers?ClassifierTypeCode={TypeCode}&ClassifierCode={Code}";
         public string DeleteURI => URI;
         public string ChangeURI => URI;
-        public string GetRelatedURI => $"/api/relationships?ClassifierTypeCode={TypeCode}&ClassifierCode={Code}";
+        public string RelatedURI => $"/api/relationships?ClassifierTypeCode={TypeCode}&ClassifierCode={Code}";
         public string Code { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string UpdatedBy { get; set; }
         public DateTime UpdatedOn { get; set; }
         public string TypeCode { get; set; }
-        public List<ClassifierCollectionDto> Relationships { get; set; }
+        public List<ClassifierRelationshipDto> Relationships = new List<ClassifierRelationshipDto>();
         public ClassifierDto() { }
         public ClassifierDto(Classifier classifier, bool addRelationships = true)
         {
@@ -29,34 +29,9 @@ namespace ClassifyApi
             UpdatedOn = classifier.UpdatedOn;
             if (addRelationships)
             {
-                Relationships = new List<ClassifierCollectionDto>();
-                var map = new Dictionary<string, List<ClassifierRelationshipDto>>();
-                foreach (var r in classifier.GetRelated())
-                {
-                    if (r.IsInbound) continue;
-                    if (!map.ContainsKey(r.RelationshipTypeCode))
-                    {
-                        map[r.RelationshipTypeCode] = new List<ClassifierRelationshipDto>();
-                    }
-                    map[r.RelationshipTypeCode].Add(new ClassifierRelationshipDto(r));
-                }
-
-                foreach (var relationshipTypeCode in map.Keys)
-                {
-                    Relationships.Add(new ClassifierCollectionDto
-                    {
-                        RelationshipTypeCode = relationshipTypeCode,
-                        Relationships = map[relationshipTypeCode]
-                    });
-                }
+                foreach (var relationship in classifier.GetRelated())
+                    Relationships.Add(new ClassifierRelationshipDto(relationship));
             }
         }
     }
-
-    public class ClassifierCollectionDto
-    {
-        public List<ClassifierRelationshipDto> Relationships { get; set; }
-        public string RelationshipTypeCode { get; set; }
-    }
-
 }

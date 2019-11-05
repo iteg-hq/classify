@@ -16,6 +16,6 @@ WHERE ot.rv = (
       AND it.ClassifierTypeCodeID = ot.ClassifierTypeCodeID
   )
   AND ot.IsDeleted = 0
-  AND ot.ClassifierTypeCodeID != 0
+  --AND ot.ClassifierTypeCodeID != 0
   AND ot.ClassifierCodeID = -1 -- Classifier types
 ;

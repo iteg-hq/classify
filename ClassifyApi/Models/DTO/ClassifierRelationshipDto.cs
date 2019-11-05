@@ -13,7 +13,7 @@ namespace ClassifyApi
 
         public string RelationshipTypeCode;
         public string Description;
-        public double Weight;
+        public double Weight = 100.0;
         public string UpdatedBy;
         public DateTime UpdatedOn;
         public bool IsInbound;

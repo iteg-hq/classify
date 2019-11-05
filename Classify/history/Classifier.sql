@@ -1,4 +1,4 @@
-﻿CREATE VIEW dbo.Classifier
+﻿CREATE VIEW history.Classifier
 AS
 SELECT
     ct.CodeValue AS ClassifierTypeCode
@@ -7,18 +7,13 @@ SELECT
   , ot.[Description] AS ClassifierDescription
   , ot.UpdatedBy
   , ot.UpdatedOn
+  , ot.IsDeleted
 FROM internal.Classifier AS ot
 INNER JOIN internal.Code AS c
   ON c.CodeID = ot.ClassifierCodeID
 INNER JOIN internal.Code AS ct
   ON ct.CodeID = ot.ClassifierTypeCodeID
-WHERE ot.rv = (
-    SELECT MAX(rv)
-    FROM internal.Classifier AS it
-    WHERE it.ClassifierCodeID = ot.ClassifierCodeID
-      AND it.ClassifierTypeCodeID = ot.ClassifierTypeCodeID
-  )
-  AND ot.IsDeleted = 0
-  --AND ot.ClassifierTypeCodeID != 0 -- Not relationship types
+WHERE ot.IsDeleted = 0
+  AND ot.ClassifierTypeCodeID != 0 -- Not relationship types
   AND ot.ClassifierCodeID != -1 -- Not classifier types
 ;

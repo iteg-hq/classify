@@ -17,16 +17,9 @@ namespace ClassifyApi.Controllers
 
         // GET api/types
         [Route("api/types")]
-        public IEnumerable<ClassifierTypeDto> GetClassifierTypes([FromUri] ClassifierTypeQuery query)
+        public IEnumerable<ClassifierTypeDto> GetClassifierTypes()
         {
-            if (query != null)
-            {
-                return dal.GetClassifierTypes().Where(query.Filter).Select(t => new ClassifierTypeDto(t));
-            }
-            else
-            {
-                return dal.GetClassifierTypes().Select(t => new ClassifierTypeDto(t)).OrderBy(c => c.Code);
-            }
+            return dal.GetClassifierTypes().Select(t => new ClassifierTypeDto(t)).OrderBy(c => c.Code);
         }
 
         // POST api/types
@@ -106,7 +99,7 @@ namespace ClassifyApi.Controllers
         [Route("api/relationships")]
         public ClassifierRelationshipDto PostClassifierRelationship([FromBody] ClassifierRelationshipDto relationship)
         {
-            dal[relationship.Classifier.TypeCode][relationship.Classifier.Code].AddRelated(relationship.RelationshipTypeCode, relationship.RelatedClassifier);
+            dal[relationship.Classifier.TypeCode][relationship.Classifier.Code].AddRelated(relationship.RelationshipTypeCode, relationship.RelatedClassifier, weight: relationship.Weight);
             return relationship;
         }
 

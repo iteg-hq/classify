@@ -2,7 +2,11 @@
 }
 
 .active {
-  background-color: yellow;
+  font-weight: bold;
+}
+
+ul {
+  list-style-type: circle;
 }
 
 /*
