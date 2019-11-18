@@ -295,7 +295,7 @@ async function startup() {
         }
       },
       onNavigate: function (typeCode, classifierCode) {
-        location.hash = `/${typeCode}/${classifierCode || ""}`
+        location.hash = `/${encodeURIComponent(typeCode)}/${encodeURIComponent(classifierCode || "")}`
       }
     }
   })
