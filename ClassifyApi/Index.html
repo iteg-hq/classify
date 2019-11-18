@@ -112,7 +112,7 @@
                 <a :href="'#' + relationship.relatedClassifier.typeCode + '/' + relationship.relatedClassifier.code ">
                   {{ relationship.relatedClassifier.typeCode }}.{{ relationship.relatedClassifier.code }}
                 </a>
-                <span v-if="relationship.weight < 100.0">({{ relationship.weight }})</span>
+                <span v-if="relationship.weight != 100.0">({{ relationship.weight }})</span>
                 <span @click="deleteRelationship(relationship)">[x]</span>
               </li>
             </ul>
@@ -125,7 +125,7 @@
                 <a :href="'#' + relationship.classifier.typeCode + '/' + relationship.classifier.code ">
                   {{ relationship.classifier.typeCode }}.{{ relationship.classifier.code }}
                 </a>
-                <span v-if="relationship.weight < 100.0">({{ relationship.weight }})</span>
+                <span v-if="relationship.weight != 100.0">({{ relationship.weight }})</span>
                 <span @click="deleteRelationship(relationship)">[x]</span>
               </li>
             </ul>
