@@ -2,26 +2,6 @@
 
 let app;
 
-function single(array, predicate) {
-  let arrayLength = array.length;
-  let value = null;
-  for (let i = 0; i < arrayLength; i++) {
-    if (predicate(array[i])) {
-      if (value == null) value = array[i];
-      else throw "Predicate matches several expressions";
-    }
-  }
-  return value;
-}
-
-function getRelationshipTypes(relationships) {
-  return [...new Set(relationships.map(r => r.relationshipTypeCode))].sort();
-}
-
-function getRelationshipsByTypeCode(relationships, typeCode) {
-  return relationships.filter(r => r.relationshipTypeCode == typeCode);
-}
-
 Vue.component("newClassifier", {
   props: ["id", "title", "classifier"],
   template: `
