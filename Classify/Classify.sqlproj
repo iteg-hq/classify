@@ -68,6 +68,7 @@
     <Folder Include="internal\Tables" />
     <Folder Include="internal\Stored Procedures" />
     <Folder Include="history" />
+    <Folder Include="Security" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="internal\internal.sql" />
@@ -100,6 +101,7 @@
     <Build Include="Stored Procedures\GetClassifierRelationshipTypes.sql" />
     <Build Include="history\Classifier.sql" />
     <Build Include="history\history.sql" />
+    <Build Include="Security\ClassifyUser.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Local.publish.xml" />
